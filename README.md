@@ -1,1 +1,3 @@
 # python-pfgen
+
+Puppetfile generator
