@@ -51,11 +51,20 @@ def importRepo(username, reponame, url, version, current_version):
             metadata = json.loads(metadata_json_str)
 
             version = metadata['version']
+            url = repo.clone_url
+
         except Exception as e:
             eprint("ERROR: retrieving metadata for {}: {}".format(repo.name,str(e)))
 
     if url:
         printPuppetfileItem(reponame, url, version)
+    else:
+        try:
+            g = Github(GH_TOKEN)
+            repo = g.get_repo(username+"/"+reponame)
+            printPuppetfileItem(reponame, repo.clone_url, version)
+        except Exception as e:
+            eprint("ERROR: retrieving metadata for {}: {}".format(username+"/"+reponame,str(e)))
 
 
 def importUser(username, repos, repo_pattern, skip_forked_repos, current_version):
