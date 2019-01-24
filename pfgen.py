@@ -14,6 +14,12 @@ from github import Github
 from configparser import SafeConfigParser
 from distutils.version import LooseVersion
 
+def importRepo(username, reponame):
+    print("repo: "+username+"/"+reponame)
+
+def importUser(username):
+    print("user: "+username)
+
 if __name__ == '__main__':
     try:
         basedir = sys.argv[1]
@@ -35,4 +41,8 @@ if __name__ == '__main__':
 
     for section in config.sections():
         if section!="github":
-            print(str(section))
+            if "/" in section:
+                section_parts = section.split('/')
+                importRepo(section_parts[0], section_parts[1])
+            else:
+                importUser(section)
