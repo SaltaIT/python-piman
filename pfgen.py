@@ -120,38 +120,38 @@ if __name__ == '__main__':
     try:
         debug = config.getboolean('github', 'debug')
     except:
-        debug=False
+        debug = False
 
     for section in config.sections():
         if section!="github":
             try:
-                version=config.get(section, 'version').strip('"').strip("'").strip()
+                version = config.get(section, 'version').strip('"').strip("'").strip()
             except:
-                version=""
+                version = ""
             try:
-                current_version=config.getboolean(section, 'current-version')
+                current_version = config.getboolean(section, 'current-version')
             except:
-                current_version=False
+                current_version = False
             if "/" in section:
                 section_parts = section.split('/')
                 username = section_parts[0]
                 reponame = section_parts[1]
                 try:
-                    url=config.get(section, 'url').strip('"').strip("'").strip()
+                    url = config.get(section, 'url').strip('"').strip("'").strip()
                 except:
-                    url=""
+                    url = ""
 
                 importRepo(username, reponame, url, version, current_version)
             else:
                 username = section
-                repos=[]
+                repos = []
                 try:
-                    repo_pattern=config.get(section, 'repo-pattern').strip('"').strip("'").strip()
+                    repo_pattern = config.get(section, 'repo-pattern').strip('"').strip("'").strip()
                 except:
-                    repo_pattern=""
+                    repo_pattern = ""
                 try:
-                    skip_forked_repos=config.getboolean(section, 'skip-forked-repos')
+                    skip_forked_repos = config.getboolean(section, 'skip-forked-repos')
                 except:
-                    skip_forked_repos=False
+                    skip_forked_repos = False
 
                 importUser(username, repos, repo_pattern, skip_forked_repos, current_version)
