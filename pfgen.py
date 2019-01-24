@@ -32,14 +32,15 @@ def importUser(username, repos, repo_pattern, skip_forked_repos, current_version
 
     g = Github(GH_TOKEN)
 
-    for repo in g.get_user(gh_username).get_repos():
+    for repo in g.get_user(username).get_repos():
         if repo_pattern in repo.name:
 
             if debug:
                 eprint("considering: "+repo.name+" - is fork? "+str(repo.fork))
 
             if skip_forked_repos and repo.fork:
-                eprint("skipping forked repo: {}".format(repo.name))
+                if debug:
+                    eprint("skipping forked repo: {}".format(repo.name))
                 continue
 
 
