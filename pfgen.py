@@ -77,8 +77,6 @@ def importUser(username, repos, repo_pattern, skip_forked_repos, current_version
                     eprint("skipping forked repo: {}".format(repo.name))
                 continue
 
-            url = repo.clone_url
-
             if current_version:
                 try:
                     metadata_json = repo.get_contents("metadata.json").decoded_content
@@ -88,12 +86,12 @@ def importUser(username, repos, repo_pattern, skip_forked_repos, current_version
                         metadata_json_str = metadata_json
 
                     metadata = json.loads(metadata_json_str)
-                    version = metadata['version']
+
+                    printPuppetfileItem(repo.name, repo.clone_url, metadata['version'])
                 except Exception as e:
                     eprint("ERROR: retrieving metadata for {}: {}".format(repo.name,str(e)))
-                    version=""
-
-            printPuppetfileItem(repo.name, url, version)
+            else:
+                printPuppetfileItem(repo.name, repo.clone_url, "")
 
 
 if __name__ == '__main__':
