@@ -26,7 +26,7 @@ def printPuppetfileItem(modulename, url, tag):
     print("mod '"+modulename+"',")
     print("   :git => '"+url+"'", end="")
     if tag:
-        print(",\n   :tag => '"+version+"'")
+        print(",\n   :tag => '"+tag+"'")
     else:
         print("")
 
@@ -76,6 +76,24 @@ def importUser(username, repos, repo_pattern, skip_forked_repos, current_version
                 if debug:
                     eprint("skipping forked repo: {}".format(repo.name))
                 continue
+
+            url = repo.clone_url
+
+            if current_version:
+                try:
+                    metadata_json = repo.get_contents("metadata.json").decoded_content
+                    if type(metadata_json) is bytes:
+                        metadata_json_str = metadata_json.decode("utf-8")
+                    elif type(metadata_json) is str:
+                        metadata_json_str = metadata_json
+
+                    metadata = json.loads(metadata_json_str)
+                    version = metadata['version']
+                except Exception as e:
+                    eprint("ERROR: retrieving metadata for {}: {}".format(repo.name,str(e)))
+                    version=""
+
+            printPuppetfileItem(repo.name, url, version)
 
 
 if __name__ == '__main__':
