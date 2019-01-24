@@ -17,11 +17,45 @@ from distutils.version import LooseVersion
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
+def printPuppetfileItem(modulename, url, tag):
+    # mod 'eyp-demo',
+    #    :git => 'ssh://git@gitlab.demo.systemadmin.es:7999/eyp/eyp-demo.git'
+    # mod 'eyp-apache',
+    #    :git => 'https://github.com/NTTCom-MS/eyp-apache',
+    #    :tag => '0.6.3'
+    print("mod '"+modulename+"',")
+    print("   :git => '"+url+"'", end="")
+    if tag:
+        print(",\n   :tag => '"+version+"'")
+    else:
+        print("")
+
 def importRepo(username, reponame, url, version, current_version):
     global debug, GH_TOKEN
     if debug:
         eprint("repo: "+username+"/"+reponame)
         eprint(str(locals()))
+
+    if not version and current_version and not url:
+        # parse current version
+        g = Github(GH_TOKEN)
+        repo = g.get_repo(username+"/"+reponame)
+
+        try:
+            metadata_json = repo.get_contents("metadata.json").decoded_content
+            if type(metadata_json) is bytes:
+                metadata_json_str = metadata_json.decode("utf-8")
+            elif type(metadata_json) is str:
+                metadata_json_str = metadata_json
+
+            metadata = json.loads(metadata_json_str)
+
+            version = metadata['version']
+        except Exception as e:
+            eprint("ERROR: retrieving metadata for {}: {}".format(repo.name,str(e)))
+
+    if url:
+        printPuppetfileItem(reponame, url, version)
 
 
 def importUser(username, repos, repo_pattern, skip_forked_repos, current_version):
@@ -54,7 +88,7 @@ if __name__ == '__main__':
     config.read(basedir+'/pfgen.config')
 
     try:
-        GH_TOKEN = config.get('github', 'token').strip('"').strip()
+        GH_TOKEN = config.get('github', 'token').strip('"').strip("'").strip()
     except:
         sys.exit("ERROR: PAT is mandatory")
 
@@ -66,7 +100,7 @@ if __name__ == '__main__':
     for section in config.sections():
         if section!="github":
             try:
-                version=config.get(section, 'version').strip('"').strip()
+                version=config.get(section, 'version').strip('"').strip("'").strip()
             except:
                 version=""
             try:
@@ -78,7 +112,7 @@ if __name__ == '__main__':
                 username = section_parts[0]
                 reponame = section_parts[1]
                 try:
-                    url=config.get(section, 'url').strip('"').strip()
+                    url=config.get(section, 'url').strip('"').strip("'").strip()
                 except:
                     url=""
 
@@ -87,7 +121,7 @@ if __name__ == '__main__':
                 username = section
                 repos=[]
                 try:
-                    repo_pattern=config.get(section, 'repo-pattern').strip('"').strip()
+                    repo_pattern=config.get(section, 'repo-pattern').strip('"').strip("'").strip()
                 except:
                     repo_pattern=""
                 try:
