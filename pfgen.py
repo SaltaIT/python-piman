@@ -14,18 +14,33 @@ from github import Github
 from configparser import SafeConfigParser
 from distutils.version import LooseVersion
 
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
 def importRepo(username, reponame, url, version, current_version):
-    global debug
+    global debug, GH_TOKEN
     if debug:
-        print("repo: "+username+"/"+reponame)
-        print(str(locals()))
+        eprint("repo: "+username+"/"+reponame)
+        eprint(str(locals()))
 
 
 def importUser(username, repos, repo_pattern, skip_forked_repos, current_version):
-    global debug
+    global debug, GH_TOKEN
     if debug:
-        print("user: "+username)
-        print(str(locals()))
+        eprint("user: "+username)
+        eprint(str(locals()))
+
+    g = Github(GH_TOKEN)
+
+    for repo in g.get_user(gh_username).get_repos():
+        if repo_pattern in repo.name:
+
+            if debug:
+                eprint("considering: "+repo.name+" - is fork? "+str(repo.fork))
+
+            if skip_forked_repos and repo.fork:
+                eprint("skipping forked repo: {}".format(repo.name))
+                continue
 
 
 if __name__ == '__main__':
