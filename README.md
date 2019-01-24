@@ -4,7 +4,7 @@ Puppetfile generator
 
 ## config file
 
-pfgen.config
+pfgen.configs
 
 ```
 [github]
