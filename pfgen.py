@@ -105,12 +105,12 @@ def importUser(username, repos, repo_pattern, skip_forked_repos, current_version
 
 if __name__ == '__main__':
     try:
-        basedir = sys.argv[1]
+        config_file = sys.argv[1]
     except IndexError:
-        basedir = '.'
+        config_file = './pfgen.config'
 
     config = SafeConfigParser()
-    config.read(basedir+'/pfgen.config')
+    config.read(config_file)
 
     try:
         GH_TOKEN = config.get('github', 'token').strip('"').strip("'").strip()
