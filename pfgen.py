@@ -38,7 +38,10 @@ def importRepo(username, reponame, url, version, current_version):
 
     if not version and current_version and not url:
         # parse current version
-        g = Github(GH_TOKEN)
+        if GH_TOKEN:
+            g = Github(GH_TOKEN)
+        else:
+            g = Github()
         repo = g.get_repo(username+"/"+reponame)
 
         try:
@@ -60,7 +63,10 @@ def importRepo(username, reponame, url, version, current_version):
         printPuppetfileItem(reponame, url, version)
     else:
         try:
-            g = Github(GH_TOKEN)
+            if GH_TOKEN:
+                g = Github(GH_TOKEN)
+            else:
+                g = Github()
             repo = g.get_repo(username+"/"+reponame)
             printPuppetfileItem(reponame, repo.clone_url, version)
         except Exception as e:
@@ -73,7 +79,10 @@ def importUser(username, repos, repo_pattern, skip_forked_repos, current_version
         eprint("user: "+username)
         eprint(str(locals()))
 
-    g = Github(GH_TOKEN)
+    if GH_TOKEN:
+        g = Github(GH_TOKEN)
+    else:
+        g = Github()
 
     for repo in g.get_user(username).get_repos():
         if repo_pattern in repo.name:
@@ -115,7 +124,7 @@ if __name__ == '__main__':
     try:
         GH_TOKEN = config.get('github', 'token').strip('"').strip("'").strip()
     except:
-        sys.exit("ERROR: PAT is mandatory")
+        GH_TOKEN = ""
 
     try:
         debug = config.getboolean('github', 'debug')
