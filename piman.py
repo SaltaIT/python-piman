@@ -83,12 +83,20 @@ if __name__ == '__main__':
 
             instance_repo_path = base_dir+'/'+instance+'/instance'
 
-            git = sh.git.bake(_cwd=instance_repo_path)
+            os.makedirs(name=instance_repo_path, exist_ok=True)
+
 
             if os.path.isdir(instance_repo_path+'/.git'):
                 # repo ja colonat
+                print('repo ja clonat')
             else:
                 #clonar repo, importar desde template
-                git.clone(instance_instance_remote)
-                git.remote.add('origin', instance_template)
+                sh.git.clone(instance_instance_remote, instance_repo_path)
+
+                git = sh.git.bake(_cwd=instance_repo_path)
+                git.remote.add('template', instance_template)
                 git.pull('template', 'master')
+
+                sh.bash(instance_repo_path+'/update.utils.sh')
+
+                sh.cp('/root/.ssh/id*a', instance_repo_path+'/ssh')
