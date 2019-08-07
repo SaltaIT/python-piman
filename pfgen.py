@@ -137,10 +137,12 @@ if __name__ == '__main__':
                 version = config.get(section, 'version').strip('"').strip("'").strip()
             except:
                 version = ""
+
             try:
                 current_version = config.getboolean(section, 'current-version')
             except:
                 current_version = False
+            
             if "/" in section:
                 section_parts = section.split('/')
                 username = section_parts[0]
