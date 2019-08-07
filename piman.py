@@ -6,9 +6,9 @@ from __future__ import print_function
 Puppet Instance MANager
 """
 
+import sh
 import os
 import sys
-import git
 import json
 import argparse
 from github import Github
@@ -83,16 +83,12 @@ if __name__ == '__main__':
 
             instance_repo_path = base_dir+'/'+instance+'/instance'
 
-            os.makedirs(name=instance_repo_path, exist_ok=True)
+            git = sh.git.bake(_cwd=instance_repo_path)
 
-            try:
-                instance_repo = git.Repo.clone_from(url=instance_instance_remote, to_path=instance_repo_path)
-            except Exception as e:
-                instance_repo = git.Repo(instance_repo_path)
-
-            try:
-                instance_repo.remotes.template
-            except:
-                template_origin = instance_repo.create_remote('template', instance_template)
-
-                # git pull template master
+            if os.path.isdir(instance_repo_path+'/.git'):
+                # repo ja colonat
+            else:
+                #clonar repo, importar desde template
+                git.clone(instance_instance_remote)
+                git.remote.add('origin', instance_template)
+                git.pull('template', 'master')

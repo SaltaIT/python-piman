@@ -8,4 +8,4 @@ PyJWT
 requests
 urllib3
 wrapt
-gitpython
+sh
