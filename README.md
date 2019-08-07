@@ -1,8 +1,10 @@
-# python-pfgen
+# python-p5tools
+
+## pfgen
 
 Puppetfile generator
 
-## config file
+### config file
 
 pfgen.config
 
