@@ -1,8 +1,6 @@
 # python-p5tools
 
-## piman
-
-Puppet Instance MANager
+## piman - Puppet Instance MANager
 
 ### config file
 
@@ -12,9 +10,7 @@ piman.config
 TBD
 ```
 
-## pfgen
-
-Puppetfile generator
+## pfgen - Puppetfile generator
 
 ### config file
 
