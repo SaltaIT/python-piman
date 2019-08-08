@@ -10,8 +10,10 @@ import sh
 import os
 import sys
 import json
+import glob
 import argparse
 from github import Github
+from pathlib import Path
 from configparser import SafeConfigParser
 from distutils.version import LooseVersion
 
@@ -35,7 +37,7 @@ TCP_ID_TO_STATE = {
 
 def load_proc_net_tcp():
     ''' Read the table of tcp connections & remove header  '''
-    with open(PROC_TCP,'r') as f:
+    with open('/proc/net/tcp','r') as f:
         content = f.readlines()
         content.pop(0)
     return content
@@ -73,7 +75,7 @@ def get_free_tcp_port(base_port):
 
     proc_net_tcp = load_proc_net_tcp()
     tcp_listen_ports = {}
-    for line in content:
+    for line in proc_net_tcp:
         line_array = _remove_empty(line.split(' '))
         l_host,l_port = _convert_ip_port(line_array[1]) # Convert ipaddress and port from hex to decimal.
         state = TCP_ID_TO_STATE[line_array[3]]
@@ -122,7 +124,7 @@ if __name__ == '__main__':
         sys.exit("ERROR: puppet-fqdn is mandatory")
 
     try:
-        debug = config.getboolean('clickdownloader', 'debug')
+        debug = config.getboolean('piman', 'debug')
     except:
         debug = False
 
@@ -171,7 +173,8 @@ if __name__ == '__main__':
 
             if os.path.isdir(instance_repo_path+'/.git'):
                 # repo ja colonat
-                print('repo ja clonat')
+                if debug:
+                    print(instance+': repo ja clonat')
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path)
@@ -180,9 +183,9 @@ if __name__ == '__main__':
                 git_instance_repo.remote.add('template', instance_template)
                 git_instance_repo.pull('template', 'master')
 
-                sh.bash(instance_repo_path+'/update.utils.sh')
+                sh.bash(instance_repo_path+'/update.utils.sh', _cwd=instance_repo_path)
 
-                sh.cp('/root/.ssh/id*a', instance_repo_path+'/ssh')
+                sh.cp(glob.glob(str(Path.home())+'/.ssh/id*a'), instance_repo_path+'/ssh')
 
                 gitignore = open(instance_repo_path+"/.gitignore","w+")
                 gitignore.write("*~")
