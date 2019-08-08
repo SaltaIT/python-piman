@@ -166,6 +166,9 @@ if __name__ == '__main__':
             os.makedirs(name=instance_repo_path, exist_ok=True)
 
 
+            if debug:
+                print("DEBUG: instance repo path: "+instance_repo_path)
+
             if os.path.isdir(instance_repo_path+'/.git'):
                 # repo ja colonat
                 print('repo ja clonat')
