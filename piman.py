@@ -21,20 +21,6 @@ def eprint(*args, **kwargs):
     ''' print to stderr'''
     print(*args, file=sys.stderr, **kwargs)
 
-TCP_ID_TO_STATE = {
-        '01':'ESTABLISHED',
-        '02':'SYN_SENT',
-        '03':'SYN_RECV',
-        '04':'FIN_WAIT1',
-        '05':'FIN_WAIT2',
-        '06':'TIME_WAIT',
-        '07':'CLOSE',
-        '08':'CLOSE_WAIT',
-        '09':'LAST_ACK',
-        '0A':'LISTEN',
-        '0B':'CLOSING'
-        }
-
 def load_proc_net_tcp():
     ''' Read the table of tcp connections & remove header  '''
     with open('/proc/net/tcp','r') as f:
@@ -74,22 +60,27 @@ def get_free_tcp_port(base_port):
     candidate_port = base_port
 
     proc_net_tcp = load_proc_net_tcp()
-    tcp_listen_ports = {}
+    tcp_listen_ports = []
     for line in proc_net_tcp:
         line_array = _remove_empty(line.split(' '))
         l_host,l_port = _convert_ip_port(line_array[1]) # Convert ipaddress and port from hex to decimal.
-        state = TCP_ID_TO_STATE[line_array[3]]
         pid = _get_pid_of_inode(line_array[9])                  # Get pid prom inode.
 
-        tcp_listen_ports['l_port'] = l_port
-        tcp_listen_ports['state'] = state
-        tcp_listen_ports['pid'] = pid
+        # '0A':'LISTEN',
+        if(line_array[3]=='0A'):
+            tcp_listen_ports.append(l_port)
+
+    if debug:
+        print(str(tcp_listen_ports))
 
     found_port=False
     while not found_port:
         for listen_port in tcp_listen_ports:
-            if listen_port['l_port'] == candidate_port:
+            if debug:
+                print(str(listen_port)+' vs '+candidate_port)
+            if listen_port == candidate_port:
                 candidate_port=candidate_port+1
+                found_port=False
                 break
         found_port=True
 
@@ -196,6 +187,9 @@ if __name__ == '__main__':
                 gitignore.close()
 
                 next_free_port = get_free_tcp_port(base_port)
+
+                if debug:
+                    print(instance+': assigned port: '+next_free_port)
 
                 docker_compose_override = open(instance_repo_path+'/docker-compose.override.yml')
                 gitignore.write('version: "2.1"')
