@@ -12,8 +12,9 @@ import sys
 import json
 import glob
 import argparse
-from github import Github
+from io import StringIO
 from pathlib import Path
+from github import Github
 from configparser import SafeConfigParser
 from distutils.version import LooseVersion
 
@@ -28,19 +29,6 @@ def load_proc_net_tcp():
         content.pop(0)
     return content
 
-def _get_pid_of_inode(inode):
-    '''
-    To retrieve the process pid, check every running process and look for one using
-    the given inode.
-    '''
-    for item in glob.glob('/proc/[0-9]*/fd/[0-9]*'):
-        try:
-            if re.search(inode,os.readlink(item)):
-                return item.split('/')[2]
-        except:
-            pass
-    return None
-
 def _hex2dec(s):
     return str(int(s,16))
 
@@ -48,12 +36,12 @@ def _ip(s):
     ip = [(_hex2dec(s[6:8])),(_hex2dec(s[4:6])),(_hex2dec(s[2:4])),(_hex2dec(s[0:2]))]
     return '.'.join(ip)
 
-def _remove_empty(array):
-    return [x for x in array if x !='']
-
 def _convert_ip_port(array):
     host,port = array.split(':')
     return _ip(host),_hex2dec(port)
+
+def _remove_empty(array):
+    return [x for x in array if x !='']
 
 def get_free_tcp_port(base_port):
 
@@ -64,20 +52,19 @@ def get_free_tcp_port(base_port):
     for line in proc_net_tcp:
         line_array = _remove_empty(line.split(' '))
         l_host,l_port = _convert_ip_port(line_array[1]) # Convert ipaddress and port from hex to decimal.
-        pid = _get_pid_of_inode(line_array[9])                  # Get pid prom inode.
 
         # '0A':'LISTEN',
         if(line_array[3]=='0A'):
             tcp_listen_ports.append(l_port)
 
-    if debug:
-        print(str(tcp_listen_ports))
+    # if debug:
+    #     print(str(tcp_listen_ports))
 
     found_port=False
     while not found_port:
         for listen_port in tcp_listen_ports:
-            if debug:
-                print(str(listen_port)+' vs '+candidate_port)
+            # if debug:
+            #     print(str(listen_port)+' vs '+candidate_port)
             if listen_port == candidate_port:
                 candidate_port=candidate_port+1
                 found_port=False
@@ -179,11 +166,11 @@ if __name__ == '__main__':
                 sh.cp(glob.glob(str(Path.home())+'/.ssh/id*a'), instance_repo_path+'/ssh')
 
                 gitignore = open(instance_repo_path+"/.gitignore","w+")
-                gitignore.write("*~")
-                gitignore.write("*swp")
-                gitignore.write("ssh/id_*")
-                gitignore.write("utils/puppet-masterless")
-                gitignore.write("utils/autocommit")
+                gitignore.write("*~\n")
+                gitignore.write("*swp\n")
+                gitignore.write("ssh/id_*\n")
+                gitignore.write("utils/puppet-masterless\n")
+                gitignore.write("utils/autocommit\n")
                 gitignore.close()
 
                 next_free_port = get_free_tcp_port(base_port)
@@ -192,26 +179,37 @@ if __name__ == '__main__':
                     print(instance+': assigned port: '+next_free_port)
 
                 docker_compose_override = open(instance_repo_path+'/docker-compose.override.yml', "w+")
-                docker_compose_override.write('version: "2.1"')
-                docker_compose_override.write('services:')
-                docker_compose_override.write('  puppetdb:')
+                docker_compose_override.write('version: "2.1"\n')
+                docker_compose_override.write('services:\n')
+                docker_compose_override.write('  puppetdb:\n')
                 docker_compose_override.write('    environment:')
-                docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'")
-                docker_compose_override.write("      EYP_PUPPETDB_EXTERNAL_PORT: '"+next_free_port+"'")
-                docker_compose_override.write("  puppetmaster:")
-                docker_compose_override.write("    ports:")
-                docker_compose_override.write("      - "+next_free_port+":8140/tcp")
+                docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'\n")
+                docker_compose_override.write("      EYP_PUPPETDB_EXTERNAL_PORT: '"+next_free_port+"'\n")
+                docker_compose_override.write("  puppetmaster:\n")
+                docker_compose_override.write("    ports:\n")
+                docker_compose_override.write("      - "+next_free_port+":8140/tcp\n")
                 docker_compose_override.write("    environment:")
-                docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'")
-                docker_compose_override.write("      EYP_PM_SSL_REPO: '"+instance_ssl_remote+"'")
-                docker_compose_override.write("      EYP_PM_CUSTOMER_REPO: '"+instance_config_remote+"'")
-                docker_compose_override.write("      EYP_PM_FILES_REPO: '"+instance_files_remote+"'")
+                docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'\n")
+                docker_compose_override.write("      EYP_PM_SSL_REPO: '"+instance_ssl_remote+"'\n")
+                docker_compose_override.write("      EYP_PM_CUSTOMER_REPO: '"+instance_config_remote+"'\n")
+                docker_compose_override.write("      EYP_PM_FILES_REPO: '"+instance_files_remote+"'\n")
                 docker_compose_override.close()
 
                 git_instance_repo.add('--all')
                 git_instance_repo.commit('-vam', 'template')
-                git_instance_repo.pull('origin', 'master', '--allow-unrelated-histories', '--no-edit')
+
+
+                buf = StringIO()
+                git_instance_repo('ls-remote', '--heads', 'origin', 'master',_out=buf)
+
+                if debug:
+                    print("ls-remote: "+buf.getvalue())
+
+                if buf.getvalue():
+                    git_instance_repo.pull('origin', 'master', '--allow-unrelated-histories', '--no-edit')
+
                 git_instance_repo.push('origin', 'master')
+
 
                 # config repo
                 # Puppetfile
