@@ -178,7 +178,7 @@ if __name__ == '__main__':
 
                 sh.cp(glob.glob(str(Path.home())+'/.ssh/id*a'), instance_repo_path+'/ssh')
 
-                gitignore = open(instance_repo_path+"/.gitignore","w")
+                gitignore = open(instance_repo_path+"/.gitignore","w+")
                 gitignore.write("*~")
                 gitignore.write("*swp")
                 gitignore.write("ssh/id_*")
@@ -191,7 +191,7 @@ if __name__ == '__main__':
                 if debug:
                     print(instance+': assigned port: '+next_free_port)
 
-                docker_compose_override = open(instance_repo_path+'/docker-compose.override.yml', "w")
+                docker_compose_override = open(instance_repo_path+'/docker-compose.override.yml', "w+")
                 gitignore.write('version: "2.1"')
                 gitignore.write('services:')
                 gitignore.write('  puppetdb:')
