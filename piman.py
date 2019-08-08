@@ -79,7 +79,7 @@ def get_free_tcp_port(base_port):
         line_array = _remove_empty(line.split(' '))
         l_host,l_port = _convert_ip_port(line_array[1]) # Convert ipaddress and port from hex to decimal.
         state = TCP_ID_TO_STATE[line_array[3]]
-        pid = _get_pid_of_inode(inode)                  # Get pid prom inode.
+        pid = _get_pid_of_inode(line_array[9])                  # Get pid prom inode.
 
         tcp_listen_ports['l_port'] = l_port
         tcp_listen_ports['state'] = state
