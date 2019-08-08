@@ -97,7 +97,7 @@ if __name__ == '__main__':
     try:
         config_file = sys.argv[1]
     except IndexError:
-        config_file = './pfgen.config'
+        config_file = './piman.config'
 
     config = SafeConfigParser()
     config.read(config_file)
