@@ -14,24 +14,31 @@ from github import Github
 from configparser import SafeConfigParser
 from distutils.version import LooseVersion
 
+GH_TOKEN = ""
+debug = False
+write_to = sys.stdout
+
 def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
+    global debug
+    if debug:
+        print(*args, file=sys.stderr, **kwargs)
 
 def printPuppetfileItem(modulename, url, tag):
+    global write_to
     # mod 'eyp-demo',
     #    :git => 'ssh://git@gitlab.demo.systemadmin.es:7999/eyp/eyp-demo.git'
     # mod 'eyp-apache',
     #    :git => 'https://github.com/NTTCom-MS/eyp-apache',
     #    :tag => '0.6.3'
-    print("mod '"+modulename+"',")
-    print("   :git => '"+url+"'", end="")
+    print("mod '"+modulename+"',", file=write_to)
+    print("   :git => '"+url+"'", end="", file=write_to)
     if tag:
-        print(",\n   :tag => '"+tag+"'")
+        print(",\n   :tag => '"+tag+"'", file=write_to)
     else:
-        print("")
+        print("", file=write_to)
 
 def importRepo(username, reponame, url, version, current_version):
-    global debug, GH_TOKEN
+    global debug, GH_TOKEN, write_to
     if debug:
         eprint("repo: "+username+"/"+reponame)
         eprint(str(locals()))
@@ -74,7 +81,7 @@ def importRepo(username, reponame, url, version, current_version):
 
 
 def importUser(username, repos, repo_pattern, skip_forked_repos, current_version):
-    global debug, GH_TOKEN
+    global debug, GH_TOKEN, write_to
     if debug:
         eprint("user: "+username)
         eprint(str(locals()))
@@ -111,12 +118,10 @@ def importUser(username, repos, repo_pattern, skip_forked_repos, current_version
             else:
                 printPuppetfileItem(repo.name, repo.clone_url, "")
 
+def generatePuppetfile(config_file, write_puppetfile_to=sys.stdout):
+    global debug, GH_TOKEN, write_to
 
-if __name__ == '__main__':
-    try:
-        config_file = sys.argv[1]
-    except IndexError:
-        config_file = './pfgen.config'
+    write_to=write_puppetfile_to
 
     config = SafeConfigParser()
     config.read(config_file)
@@ -142,7 +147,7 @@ if __name__ == '__main__':
                 current_version = config.getboolean(section, 'current-version')
             except:
                 current_version = False
-            
+
             if "/" in section:
                 section_parts = section.split('/')
                 username = section_parts[0]
@@ -166,3 +171,11 @@ if __name__ == '__main__':
                     skip_forked_repos = False
 
                 importUser(username, repos, repo_pattern, skip_forked_repos, current_version)
+
+
+if __name__ == '__main__':
+    try:
+        config_file = sys.argv[1]
+    except IndexError:
+        config_file = './pfgen.config'
+    generatePuppetfile(config_file=config_file)

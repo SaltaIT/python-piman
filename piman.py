@@ -11,6 +11,7 @@ import os
 import sys
 import json
 import glob
+import pfgen
 import argparse
 from io import StringIO
 from pathlib import Path
@@ -111,6 +112,11 @@ if __name__ == '__main__':
     except:
         base_port = 8240
 
+    try:
+        pfgen_config = config.get('piman', 'pfgen-config')
+    except:
+        pfgen_config = './pfgen.config'
+
     #
     # instances puppet
     #
@@ -142,9 +148,7 @@ if __name__ == '__main__':
                 eprint("ERROR INSTANCE "+instance+": files is mandatory")
 
             instance_repo_path = base_dir+'/'+instance+'/instance'
-
             os.makedirs(name=instance_repo_path, exist_ok=True)
-
 
             if debug:
                 print("DEBUG: instance repo path: "+instance_repo_path)
@@ -152,7 +156,7 @@ if __name__ == '__main__':
             if os.path.isdir(instance_repo_path+'/.git'):
                 # repo ja colonat
                 if debug:
-                    print(instance+': repo ja clonat')
+                    print(instance+': instance repo ja clonat: '+instance_repo_path)
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path)
@@ -211,7 +215,30 @@ if __name__ == '__main__':
                 git_instance_repo.push('origin', 'master')
 
 
-                # config repo
+            # config repo
+            config_repo_path = base_dir+'/'+instance+'/.tmp_config_repo'
+            os.makedirs(name=config_repo_path, exist_ok=True)
+
+            if debug:
+                print("DEBUG: temporal config repo path: "+config_repo_path)
+
+            if os.path.isdir(config_repo_path+'/.git'):
+                # repo ja colonat
+                if debug:
+                    print(instance+': config repo ja clonat: '+config_repo_path)
+            else:
+
+                # TODO: clone repo
+
                 # Puppetfile
-                # site.pp
+                if not os.path.isfile(config_repo_path+'/Puppetfile'):
+                    config_repo_puppetfile = open(config_repo_path+'/Puppetfile', "w+")
+                    pfgen.generatePuppetfile(config_file=pfgen_config, write_puppetfile_to=config_repo_puppetfile)
+                    config_repo_puppetfile.close()
+
+                # TODO: site.pp
+
                 # hiera.yaml
+                if not os.path.isfile(config_repo_path+'/hiera.yaml'):
+                    if debug:
+                        ...

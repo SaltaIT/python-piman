@@ -7,3 +7,4 @@ fites/*
 preguntes/*
 temari/*
 *.sqlite
+__pycache__/*
