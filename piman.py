@@ -203,7 +203,7 @@ if __name__ == '__main__':
                 git_instance_repo('ls-remote', '--heads', 'origin', 'master',_out=buf)
 
                 if debug:
-                    print("ls-remote: "+buf.getvalue())
+                    print("ls-remote: >"+buf.getvalue()+"<")
 
                 if buf.getvalue():
                     git_instance_repo.pull('origin', 'master', '--allow-unrelated-histories', '--no-edit')
