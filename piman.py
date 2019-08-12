@@ -232,6 +232,8 @@ if __name__ == '__main__':
 
                 # Puppetfile
                 if not os.path.isfile(config_repo_path+'/Puppetfile'):
+                    if debug:
+                        print(instance+': generating Puppetfile')
                     config_repo_puppetfile = open(config_repo_path+'/Puppetfile', "w+")
                     pfgen.generatePuppetfile(config_file=pfgen_config, write_puppetfile_to=config_repo_puppetfile)
                     config_repo_puppetfile.close()
@@ -241,4 +243,4 @@ if __name__ == '__main__':
                 # hiera.yaml
                 if not os.path.isfile(config_repo_path+'/hiera.yaml'):
                     if debug:
-                        ...
+                        print(instance+': generating hiera.yaml')
