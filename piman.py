@@ -13,6 +13,7 @@ import json
 import glob
 import pfgen
 import argparse
+import hieragen
 from io import StringIO
 from pathlib import Path
 from github import Github
@@ -116,6 +117,11 @@ if __name__ == '__main__':
         pfgen_config = config.get('piman', 'pfgen-config')
     except:
         pfgen_config = './pfgen.config'
+
+    try:
+        hierayaml_config = config.get('piman', 'hierayaml-config')
+    except:
+        hierayaml_config = './hieragen.config'
 
     #
     # instances puppet
@@ -244,3 +250,6 @@ if __name__ == '__main__':
                 if not os.path.isfile(config_repo_path+'/hiera.yaml'):
                     if debug:
                         print(instance+': generating hiera.yaml')
+                    config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
+                    hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml)
+                    config_repo_hierayaml.close()
