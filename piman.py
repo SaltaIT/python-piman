@@ -14,6 +14,7 @@ import glob
 import pfgen
 import argparse
 import hieragen
+import siteppgen
 from io import StringIO
 from pathlib import Path
 from github import Github
@@ -122,6 +123,11 @@ if __name__ == '__main__':
         hierayaml_config = config.get('piman', 'hierayaml-config')
     except:
         hierayaml_config = './hieragen.config'
+
+    try:
+        sitepp_config = config.get('piman', 'sitepp-config')
+    except:
+        sitepp_config = './siteppgen.config'
 
     #
     # instances puppet
@@ -249,7 +255,13 @@ if __name__ == '__main__':
                 pfgen.generatePuppetfile(config_file=pfgen_config, write_puppetfile_to=config_repo_puppetfile)
                 config_repo_puppetfile.close()
 
-            # TODO: site.pp
+            # site.pp
+            if not os.path.isfile(config_repo_path+'/site.pp'):
+                if debug:
+                    print(instance+': generating site.pp')
+                config_repo_sitepp = open(config_repo_path+'/site.pp', "w+")
+                siteppgen.generatesitepp(config_file=sitepp_config, write_sitepp_to=config_repo_sitepp)
+                config_repo_sitepp.close()
 
             # hiera.yaml
             if not os.path.isfile(config_repo_path+'/hiera.yaml'):
