@@ -259,7 +259,7 @@ if __name__ == '__main__':
                 hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml)
                 config_repo_hierayaml.close()
 
-            git_instance_repo.add('--all')
-            git_instance_repo.commit('-vam', 'template')
+            git_config_repo.add('--all')
+            git_config_repo.commit('-vam', 'template')
 
             git_config_repo.push('origin', 'master')
