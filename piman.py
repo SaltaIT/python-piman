@@ -239,7 +239,7 @@ if __name__ == '__main__':
             else:
                 if debug:
                     print(instance+': inicialitzant config repo: '+config_repo_path)
-                sh.git.clone(instance_instance_remote, config_repo_path)
+                sh.git.clone(instance_config_remote, config_repo_path)
 
             # Puppetfile
             if not os.path.isfile(config_repo_path+'/Puppetfile'):
