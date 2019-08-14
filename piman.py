@@ -228,28 +228,38 @@ if __name__ == '__main__':
             if debug:
                 print("DEBUG: temporal config repo path: "+config_repo_path)
 
+            git_config_repo = sh.git.bake(_cwd=config_repo_path)
+
             if os.path.isdir(config_repo_path+'/.git'):
                 # repo ja colonat
                 if debug:
                     print(instance+': config repo ja clonat: '+config_repo_path)
+                git_config_repo.pull()
+
             else:
+                if debug:
+                    print(instance+': inicialitzant config repo: '+config_repo_path)
+                sh.git.clone(instance_instance_remote, config_repo_path)
 
-                # TODO: clone repo
+            # Puppetfile
+            if not os.path.isfile(config_repo_path+'/Puppetfile'):
+                if debug:
+                    print(instance+': generating Puppetfile')
+                config_repo_puppetfile = open(config_repo_path+'/Puppetfile', "w+")
+                pfgen.generatePuppetfile(config_file=pfgen_config, write_puppetfile_to=config_repo_puppetfile)
+                config_repo_puppetfile.close()
 
-                # Puppetfile
-                if not os.path.isfile(config_repo_path+'/Puppetfile'):
-                    if debug:
-                        print(instance+': generating Puppetfile')
-                    config_repo_puppetfile = open(config_repo_path+'/Puppetfile', "w+")
-                    pfgen.generatePuppetfile(config_file=pfgen_config, write_puppetfile_to=config_repo_puppetfile)
-                    config_repo_puppetfile.close()
+            # TODO: site.pp
 
-                # TODO: site.pp
+            # hiera.yaml
+            if not os.path.isfile(config_repo_path+'/hiera.yaml'):
+                if debug:
+                    print(instance+': generating hiera.yaml')
+                config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
+                hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml)
+                config_repo_hierayaml.close()
 
-                # hiera.yaml
-                if not os.path.isfile(config_repo_path+'/hiera.yaml'):
-                    if debug:
-                        print(instance+': generating hiera.yaml')
-                    config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
-                    hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml)
-                    config_repo_hierayaml.close()
+            git_instance_repo.add('--all')
+            git_instance_repo.commit('-vam', 'template')
+
+            git_config_repo.push('origin', 'master')
