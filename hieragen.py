@@ -44,6 +44,11 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout):
         unauth_common_area = True
 
     try:
+        puppet_agent_common_area = config.get('hieragen','puppet-agent-common-area')
+    except:
+        puppet_agent_common_area = True
+
+    try:
         debug = config.getboolean('hieragen', 'debug')
     except:
         debug = False
@@ -141,7 +146,11 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout):
         print('    globs:', file=write_to)
         print('      - "common/*.yaml"', file=write_to)
         print('      - "common.yaml"', file=write_to)
-
+    if puppet_agent_common_area:
+        print('  - name: "puppet agent config"', file=write_to)
+        print('    globs:', file=write_to)
+        print('      - "puppet-agent-config/*.yaml"', file=write_to)
+        print('      - "puppet-agent-config.yaml"', file=write_to)
 
 if __name__ == '__main__':
     try:
