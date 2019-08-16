@@ -28,7 +28,7 @@ def eprint(*args, **kwargs):
 
 def save_puppet_details_to_file(fqdn, puppetmaster_port, puppetboard_port, filename):
     dict = {'fqdn': fqdn, 'puppetmaster_port': puppetmaster_port, 'puppetboard_port': puppetboard_port}
-    file = open(filename, 'w')
+    file = open(filename, 'wb')
     pickle.dump(dict, file)
     file.close()
 
