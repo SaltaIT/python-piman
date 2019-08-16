@@ -164,12 +164,13 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
     if hieradata_base_dir:
         mkdir_gitkeep(hieradata_base_dir)
         if puppet_agent_common_area and puppet_fqdn:
-            puppet_agent_config = open(hieradata_base_dir+"/puppet-agent-config.yaml","w+")
-            puppet_agent_config.write("---\n")
-            puppet_agent_config.write("puppet::client::puppetmaster: "+puppet_fqdn+"\n")
-            if puppet_port:
-                puppet_agent_config.write("puppet::client::puppetmasterport: "+puppet_port+"\n")
-            puppet_agent_config.close()
+            if not os.path.isfile(hieradata_base_dir+"/puppet-agent-config.yaml"):
+                puppet_agent_config = open(hieradata_base_dir+"/puppet-agent-config.yaml","w+")
+                puppet_agent_config.write("---\n")
+                puppet_agent_config.write("puppet::client::puppetmaster: "+puppet_fqdn+"\n")
+                if puppet_port:
+                    puppet_agent_config.write("puppet::client::puppetmasterport: "+puppet_port+"\n")
+                puppet_agent_config.close()
 
         if unauth_common_area:
             mkdir_gitkeep(hieradata_base_dir+'/common')
