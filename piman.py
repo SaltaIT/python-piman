@@ -306,6 +306,9 @@ if __name__ == '__main__':
                 config_repo_hierayaml.close()
 
             git_config_repo.add('--all')
-            git_config_repo.commit('-vam', 'template') # TODO: hora o algo mes descriptiu
+            try:
+                git_config_repo.commit('-vam', 'template') # TODO: hora o algo mes descriptiu
+            except:
+                pass
 
             git_config_repo.push('origin', 'master')
