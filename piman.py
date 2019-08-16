@@ -12,6 +12,7 @@ import sys
 import json
 import glob
 import pfgen
+import pickle
 import argparse
 import hieragen
 import siteppgen
@@ -24,6 +25,16 @@ from distutils.version import LooseVersion
 def eprint(*args, **kwargs):
     ''' print to stderr'''
     print(*args, file=sys.stderr, **kwargs)
+
+def save_puppet_details_to_file(fqdn, puppetmaster_port, puppetboard_port, filename):
+    dict = {'fqdn': fqdn, 'puppetmaster_port': puppetmaster_port, 'puppetboard_port': puppetboard_port}
+    file = open(filename, 'w')
+    pickle.dump(dict, file)
+    file.close()
+
+def load_puppet_details_to_file(filename):
+    file = open(filename, 'r')
+    return pickle.load(file)
 
 def load_proc_net_tcp():
     ''' Read the table of tcp connections & remove header  '''
@@ -129,6 +140,11 @@ if __name__ == '__main__':
     except:
         sitepp_config = './siteppgen.config'
 
+    try:
+        enable_puppetboard = config.getboolean('piman', 'enable-puppetboard')
+    except:
+        enable_puppetboard = False
+
     #
     # instances puppet
     #
@@ -169,6 +185,11 @@ if __name__ == '__main__':
                 # repo ja colonat
                 if debug:
                     print(instance+': instance repo ja clonat: '+instance_repo_path)
+
+                saved_config = load_puppet_details_to_file(instance_repo_path+'/.piman.data')
+
+                puppet_master_port = saved_config['puppetmaster_port']
+                puppet_board_port = saved_config['puppetboard_port']
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path)
@@ -189,21 +210,28 @@ if __name__ == '__main__':
                 gitignore.write("utils/autocommit\n")
                 gitignore.close()
 
-                next_free_port = get_free_tcp_port(base_port)
+                puppet_master_port = get_free_tcp_port(base_port)
+                puppet_board_port = get_free_tcp_port(puppet_master_port+1)
+
+                save_puppet_details_to_file(puppet_fqdn, puppet_master_port, puppet_board_port, instance_repo_path+'/.piman.data')
 
                 if debug:
-                    print(instance+': assigned port: '+next_free_port)
+                    print(instance+': assigned port: '+puppet_master_port)
 
                 docker_compose_override = open(instance_repo_path+'/docker-compose.override.yml', "w+")
                 docker_compose_override.write('version: "2.1"\n')
                 docker_compose_override.write('services:\n')
+                if enable_puppetboard:
+                    docker_compose_override.write('  puppetboard:\n')
+                    docker_compose_override.write('    ports:\n')
+                    docker_compose_override.write('      - '+puppet_board_port+':80/tcp\n')
                 docker_compose_override.write('  puppetdb:\n')
                 docker_compose_override.write('    environment:')
                 docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'\n")
-                docker_compose_override.write("      EYP_PUPPETDB_EXTERNAL_PORT: '"+next_free_port+"'\n")
+                docker_compose_override.write("      EYP_PUPPETDB_EXTERNAL_PORT: '"+puppet_master_port+"'\n")
                 docker_compose_override.write("  puppetmaster:\n")
                 docker_compose_override.write("    ports:\n")
-                docker_compose_override.write("      - "+next_free_port+":8140/tcp\n")
+                docker_compose_override.write("      - "+puppet_master_port+":8140/tcp\n")
                 docker_compose_override.write("    environment:")
                 docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'\n")
                 docker_compose_override.write("      EYP_PM_SSL_REPO: '"+instance_ssl_remote+"'\n")
@@ -268,7 +296,7 @@ if __name__ == '__main__':
                 if debug:
                     print(instance+': generating hiera.yaml')
                 config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
-                hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml)
+                hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml, hieradata_base_dir=config_repo_path+'/hieradata', puppet_fqdn=puppet_fqdn, puppet_port=puppet_master_port)
                 config_repo_hierayaml.close()
 
             git_config_repo.add('--all')
