@@ -155,6 +155,7 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
         print('      - "common/*.yaml"', file=write_to)
         print('      - "common.yaml"', file=write_to)
     if puppet_agent_common_area:
+        print('', file=write_to)
         print('  - name: "puppet agent config"', file=write_to)
         print('    globs:', file=write_to)
         print('      - "puppet-agent-config/*.yaml"', file=write_to)
