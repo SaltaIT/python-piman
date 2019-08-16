@@ -2,7 +2,6 @@ sh
 idna
 wrapt
 PyJWT
-pickle
 certifi
 chardet
 urllib3
