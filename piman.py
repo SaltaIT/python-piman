@@ -211,7 +211,7 @@ if __name__ == '__main__':
                 gitignore.close()
 
                 puppet_master_port = get_free_tcp_port(base_port)
-                puppet_board_port = get_free_tcp_port(puppet_master_port+1)
+                puppet_board_port = get_free_tcp_port(int(puppet_master_port)+1)
 
                 save_puppet_details_to_file(puppet_fqdn, puppet_master_port, puppet_board_port, instance_repo_path+'/.piman.data')
 
