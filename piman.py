@@ -33,7 +33,7 @@ def save_puppet_details_to_file(fqdn, puppetmaster_port, puppetboard_port, filen
     file.close()
 
 def load_puppet_details_to_file(filename):
-    file = open(filename, 'r')
+    file = open(filename, 'rb')
     return pickle.load(file)
 
 def load_proc_net_tcp():
