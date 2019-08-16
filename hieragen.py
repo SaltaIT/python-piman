@@ -70,6 +70,9 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
     if debug:
         eprint('auth_string:'+auth_string)
 
+    if debug and hieradata_base_dir:
+        eprint('hieradata_base_dir: '+str(hieradata_base_dir))
+
     print('---', file=write_to)
     print('version: 5', file=write_to)
     print('', file=write_to)
