@@ -160,7 +160,7 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
         print('      - "puppet-agent-config/*.yaml"', file=write_to)
         print('      - "puppet-agent-config.yaml"', file=write_to)
 
-    if not hieradata_base_dir:
+    if hieradata_base_dir:
         if puppet_agent_common_area and puppet_fqdn:
             puppet_agent_config = open(hieradata_base_dir+"/puppet-agent-config.yaml","w+")
             puppet_agent_config.write("---\n")
