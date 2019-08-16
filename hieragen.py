@@ -20,7 +20,12 @@ def eprint(*args, **kwargs):
     if debug:
         print(*args, file=sys.stderr, **kwargs)
 
-def generatehierayaml(config_file, write_hierayaml_to=sys.stdout):
+def mkdir_gitkeep(dirname):
+    os.makedirs(name=dirname, exist_ok=True)
+    gitkeep = open(dirname+"/.gitkeep","w+")
+    gitkeep.close()
+
+def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base_dir='', puppet_fqdn='', puppet_port=None):
     global debug, write_to
 
     write_to=write_hierayaml_to
@@ -151,6 +156,22 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout):
         print('    globs:', file=write_to)
         print('      - "puppet-agent-config/*.yaml"', file=write_to)
         print('      - "puppet-agent-config.yaml"', file=write_to)
+
+    if not hieradata_base_dir:
+        if puppet_agent_common_area and puppet_fqdn:
+            puppet_agent_config = open(hieradata_base_dir+"/puppet-agent-config.yaml","w+")
+            puppet_agent_config.write("---\n")
+            puppet_agent_config.write("puppet::client::puppetmaster: "+puppet_fqdn+"\n")
+            if puppet_port:
+                puppet_agent_config.write("puppet::client::puppetmasterport: "++"\n")
+            puppet_agent_config.close()
+
+        if unauth_common_area:
+            mkdir_gitkeep(hieradata_base_dir+'/common')
+
+        for dir in [ '/env', '/hierarchy', '/type', '/servergroup', '/node' ]:
+            mkdir_gitkeep(dir)
+
 
 if __name__ == '__main__':
     try:
