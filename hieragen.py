@@ -161,6 +161,7 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
         print('      - "puppet-agent-config.yaml"', file=write_to)
 
     if hieradata_base_dir:
+        mkdir_gitkeep(hieradata_base_dir)
         if puppet_agent_common_area and puppet_fqdn:
             puppet_agent_config = open(hieradata_base_dir+"/puppet-agent-config.yaml","w+")
             puppet_agent_config.write("---\n")
@@ -172,8 +173,8 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
         if unauth_common_area:
             mkdir_gitkeep(hieradata_base_dir+'/common')
 
-        for dir in [ '/env', '/hierarchy', '/type', '/servergroup', '/node' ]:
-            mkdir_gitkeep(dir)
+        for dir_name in [ '/env', '/hierarchy', '/type', '/servergroup', '/node' ]:
+            mkdir_gitkeep(hieradata_base_dir+dir_name)
 
 
 if __name__ == '__main__':
