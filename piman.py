@@ -186,13 +186,18 @@ if __name__ == '__main__':
                 if debug:
                     print(instance+': instance repo ja clonat: '+instance_repo_path)
 
-                saved_config = load_puppet_details_to_file(instance_repo_path+'/.piman.data')
+                # update repo desde remote
+                git_instance_repo = sh.git.bake(_cwd=instance_repo_path)
+                git_instance_repo.pull('origin', 'master')
 
+                saved_config = load_puppet_details_to_file(instance_repo_path+'/.piman.data')
                 puppet_master_port = saved_config['puppetmaster_port']
                 puppet_board_port = saved_config['puppetboard_port']
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path)
+
+                # TODO: check si el repo remot ja conté dades
 
                 git_instance_repo = sh.git.bake(_cwd=instance_repo_path)
                 git_instance_repo.remote.add('template', instance_template)
