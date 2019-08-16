@@ -167,7 +167,7 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
             puppet_agent_config.write("---\n")
             puppet_agent_config.write("puppet::client::puppetmaster: "+puppet_fqdn+"\n")
             if puppet_port:
-                puppet_agent_config.write("puppet::client::puppetmasterport: "++"\n")
+                puppet_agent_config.write("puppet::client::puppetmasterport: "+puppet_port+"\n")
             puppet_agent_config.close()
 
         if unauth_common_area:
