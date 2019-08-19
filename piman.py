@@ -290,7 +290,7 @@ if __name__ == '__main__':
                 docker_compose_override.write("  puppetmaster:\n")
                 docker_compose_override.write("    ports:\n")
                 docker_compose_override.write("      - "+str(puppet_master_port)+":8140/tcp\n")
-                docker_compose_override.write("    environment:")
+                docker_compose_override.write("    environment:\n")
                 docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'\n")
                 docker_compose_override.write("      EYP_PM_SSL_REPO: '"+instance_ssl_remote+"'\n")
                 docker_compose_override.write("      EYP_PM_CUSTOMER_REPO: '"+instance_config_remote+"'\n")
