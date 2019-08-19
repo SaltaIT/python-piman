@@ -257,6 +257,7 @@ if __name__ == '__main__':
                 gitignore.write("ssh/id_*\n")
                 gitignore.write("utils/puppet-masterless\n")
                 gitignore.write("utils/autocommit\n")
+                gitignore.write("puppetboard/\n")
                 gitignore.close()
 
                 projects_authstrings=[]
