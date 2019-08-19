@@ -312,6 +312,9 @@ if __name__ == '__main__':
 
                 git_instance_repo.push('origin', 'master')
 
+                if debug:
+                    print(instance+': INSTANCE repo push origin master')
+
 
             # config repo
             config_repo_path = base_dir+'/'+instance+'/.tmp_config_repo'
@@ -370,3 +373,6 @@ if __name__ == '__main__':
                 pass
 
             git_config_repo.push('origin', 'master')
+
+            if debug:
+                print(instance+': CONFIG repo push origin master')
