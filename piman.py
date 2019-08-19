@@ -176,7 +176,7 @@ if __name__ == '__main__':
     try:
         enable_puppetboard = config.getboolean('piman', 'enable-puppetboard')
     except:
-        enable_puppetboard = False
+        enable_puppetboard = True
 
     #
     # instances puppet
@@ -283,7 +283,7 @@ if __name__ == '__main__':
                     docker_compose_override.write('    ports:\n')
                     docker_compose_override.write('      - '+puppet_board_port+':80/tcp\n')
                 docker_compose_override.write('  puppetdb:\n')
-                docker_compose_override.write('    environment:')
+                docker_compose_override.write('    environment:\n')
                 docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'\n")
                 docker_compose_override.write("      EYP_PUPPETDB_EXTERNAL_PORT: '"+puppet_master_port+"'\n")
                 docker_compose_override.write("  puppetmaster:\n")
