@@ -25,7 +25,20 @@ def mkdir_gitkeep(dirname):
     gitkeep = open(dirname+"/.gitkeep","w+")
     gitkeep.close()
 
-def generatehieradataskel(hieradata_base_dir='', create_skel_auth_strings=[]):
+def generatehieradataskel(config_file, hieradata_base_dir='', create_skel_auth_strings=[]):
+    global debug
+
+    config = SafeConfigParser()
+    config.read(config_file)
+
+    try:
+        unauth_common_area = config.get('hieragen','unauth-common-area')
+    except:
+        unauth_common_area = True
+
+    if unauth_common_area:
+        mkdir_gitkeep(hieradata_base_dir+'/common')
+
     for project_id in create_skel_auth_strings:
         if debug:
             eprint("SKEL for "+project_id+": "+hieradata_base_dir+project_id)
@@ -185,10 +198,7 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
                     puppet_agent_config.write("puppet::client::puppetmasterport: "+str(puppet_port)+"\n")
                 puppet_agent_config.close()
 
-        if unauth_common_area:
-            mkdir_gitkeep(hieradata_base_dir+'/common')
-
-        generatehieradataskel(hieradata_base_dir, create_skel_auth_strings)
+        generatehieradataskel(config_file, hieradata_base_dir, create_skel_auth_strings)
 
 
 if __name__ == '__main__':
