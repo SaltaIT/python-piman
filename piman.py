@@ -13,6 +13,8 @@ import json
 import glob
 import pfgen
 import pickle
+import string
+import random
 import getopt
 import argparse
 import datetime
