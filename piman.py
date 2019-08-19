@@ -13,6 +13,7 @@ import json
 import glob
 import pfgen
 import pickle
+import getopt
 import argparse
 import datetime
 import hieragen
