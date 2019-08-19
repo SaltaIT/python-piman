@@ -25,6 +25,13 @@ def mkdir_gitkeep(dirname):
     gitkeep = open(dirname+"/.gitkeep","w+")
     gitkeep.close()
 
+def generatehieradataskel(hieradata_base_dir='', create_skel_auth_strings=[]):
+    for project_id in create_skel_auth_strings:
+        if debug:
+            eprint("SKEL for "+project_id+": "+hieradata_base_dir+project_id)
+        for dir_name in [ '/env', '/hierarchy', '/type', '/servergroup', '/node' ]:
+            mkdir_gitkeep(hieradata_base_dir+project_id+'/'+dir_name)
+
 def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base_dir='', puppet_fqdn='', puppet_port=None, create_skel_auth_strings=[]):
     global debug, write_to
 
@@ -181,11 +188,7 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
         if unauth_common_area:
             mkdir_gitkeep(hieradata_base_dir+'/common')
 
-        for project_id in projects:
-            if debug:
-                eprint("SKEL for "+project_id+": "+hieradata_base_dir+project_id)
-            for dir_name in [ '/env', '/hierarchy', '/type', '/servergroup', '/node' ]:
-                mkdir_gitkeep(hieradata_base_dir+project_id+'/'+dir_name)
+        generatehieradataskel(hieradata_base_dir, create_skel_auth_strings)
 
 
 if __name__ == '__main__':

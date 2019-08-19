@@ -353,9 +353,14 @@ if __name__ == '__main__':
                 if debug:
                     print(instance+': generating hiera.yaml')
                 config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
-                # TODO: afegir opció auth_strings - array per varis subprojectes
+
+                if debug:
+                    print("projectes: "+str(projects_authstrings))
+
                 hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml, hieradata_base_dir=config_repo_path+'/hieradata', puppet_fqdn=puppet_fqdn, puppet_port=puppet_master_port, create_skel_auth_strings=projects_authstrings)
                 config_repo_hierayaml.close()
+            else:
+                generatehieradataskel(hieradata_base_dir=config_repo_path+'/hieradata', create_skel_auth_strings=projects_authstrings)
 
             git_config_repo.add('--all')
             try:
