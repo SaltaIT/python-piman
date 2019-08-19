@@ -122,7 +122,6 @@ if __name__ == '__main__':
             showJelp("unknow option")
         elif opt in ('-c', '--config'):
             config_file = arg
-        #elif opt in ('-c', '--config'):
         else:
             showJelp("unknow option")
 
