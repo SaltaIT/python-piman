@@ -374,7 +374,7 @@ if __name__ == '__main__':
             except:
                 pass
 
-            git_config_repo.push('origin', 'master')
+            git_config_repo.push('origin', 'production')
 
             if debug:
-                print(instance+': CONFIG repo push origin master')
+                print(instance+': CONFIG repo push origin production')
