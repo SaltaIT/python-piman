@@ -25,7 +25,7 @@ def mkdir_gitkeep(dirname):
     gitkeep = open(dirname+"/.gitkeep","w+")
     gitkeep.close()
 
-def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base_dir='', puppet_fqdn='', puppet_port=None, auth_strings=[]):
+def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base_dir='', puppet_fqdn='', puppet_port=None, create_skel_auth_strings=[]):
     global debug, write_to
 
     write_to=write_hierayaml_to
@@ -169,11 +169,6 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
     if hieradata_base_dir:
         mkdir_gitkeep(hieradata_base_dir)
 
-        if auth_string:
-            auth_string_path='/'+auth_string
-            mkdir_gitkeep(hieradata_base_dir+auth_string_path)
-        else:
-            auth_string_path=''
         if puppet_agent_common_area and puppet_fqdn:
             if not os.path.isfile(hieradata_base_dir+"/puppet-agent-config.yaml"):
                 puppet_agent_config = open(hieradata_base_dir+"/puppet-agent-config.yaml","w+")
@@ -186,8 +181,9 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
         if unauth_common_area:
             mkdir_gitkeep(hieradata_base_dir+'/common')
 
-        for dir_name in [ '/env', '/hierarchy', '/type', '/servergroup', '/node' ]:
-            mkdir_gitkeep(hieradata_base_dir+auth_string_path+dir_name)
+        for project_id in projects:
+            for dir_name in [ '/env', '/hierarchy', '/type', '/servergroup', '/node' ]:
+                mkdir_gitkeep(hieradata_base_dir+project_id+'/'+dir_name)
 
 
 if __name__ == '__main__':

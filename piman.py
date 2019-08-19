@@ -27,8 +27,8 @@ def eprint(*args, **kwargs):
     ''' print to stderr'''
     print(*args, file=sys.stderr, **kwargs)
 
-def save_puppet_details_to_file(fqdn, puppetmaster_port, puppetboard_port, filename):
-    dict = {'fqdn': fqdn, 'puppetmaster_port': puppetmaster_port, 'puppetboard_port': puppetboard_port}
+def save_puppet_details_to_file(fqdn, puppetmaster_port, puppetboard_port, projects_authstrings, filename):
+    dict = {'fqdn': fqdn, 'puppetmaster_port': puppetmaster_port, 'puppetboard_port': puppetboard_port, 'projects_authstrings': projects_authstrings}
     file = open(filename, 'wb')
     pickle.dump(dict, file)
     file.close()
@@ -88,16 +88,43 @@ def get_free_tcp_port(base_port):
 
     return candidate_port
 
+def randomStringDigits(size=10):
+    lowercase_and_digits = string.ascii_lowercase + string.digits
+    return ''.join(random.choice(lowercase_and_digits) for i in range(size))
+
+def showJelp(msg):
+    print("Usage:")
+    print("   [-c|--config] <config file>")
+    print("   [-h|--help]  -- show this message")
+    print("");
+    sys.exit(msg)
+
 if __name__ == '__main__':
+
+    config_file = './piman.config'
+    auth_strings = []
+
+    # parse opts
     try:
-        config_file = sys.argv[1]
-    except IndexError:
-        config_file = './piman.config'
+        options, remainder = getopt.getopt(sys.argv[1:], 'hlc:', [
+                                                                    'help'
+                                                                    'config=',
+                                                                 ])
+    except Exception as e:
+        showJelp(str(e))
+
+
+    for opt, arg in options:
+        if opt in ('-h', '--help'):
+            showJelp("unknow option")
+        elif opt in ('-c', '--config'):
+            config_file = arg
+        #elif opt in ('-c', '--config'):
+        else:
+            showJelp("unknow option")
 
     config = SafeConfigParser()
     config.read(config_file)
-
-    # TODO: CLI options
 
     #
     # config comuna
@@ -178,6 +205,16 @@ if __name__ == '__main__':
             except:
                 eprint("ERROR INSTANCE "+instance+": files is mandatory")
 
+            try:
+                projects = json.loads(config.get(instance,'projects'))
+            except:
+                projects = []
+
+            try:
+                append_random_string = config.getboolean(instance, 'projects-append-randomstring')
+            except:
+                append_random_string = True
+
             instance_repo_path = base_dir+'/'+instance+'/instance'
             os.makedirs(name=instance_repo_path, exist_ok=True)
 
@@ -196,6 +233,7 @@ if __name__ == '__main__':
                 saved_config = load_puppet_details_to_file(instance_repo_path+'/.piman.data')
                 puppet_master_port = saved_config['puppetmaster_port']
                 puppet_board_port = saved_config['puppetboard_port']
+                projects_authstrings = saved_config['projects_authstrings']
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path)
@@ -218,10 +256,14 @@ if __name__ == '__main__':
                 gitignore.write("utils/autocommit\n")
                 gitignore.close()
 
+                projects_authstrings=[]
+                for project in projects:
+                    projects_authstrings.append(project+'_'+randomStringDigits())
+
                 puppet_master_port = get_free_tcp_port(base_port)
                 puppet_board_port = get_free_tcp_port(int(puppet_master_port)+1)
 
-                save_puppet_details_to_file(puppet_fqdn, puppet_master_port, puppet_board_port, instance_repo_path+'/.piman.data')
+                save_puppet_details_to_file(puppet_fqdn, puppet_master_port, puppet_board_port, projects_authstrings, instance_repo_path+'/.piman.data')
 
                 if debug:
                     print(instance+': puppetmaster assigned port: '+puppet_master_port)
@@ -306,7 +348,7 @@ if __name__ == '__main__':
                     print(instance+': generating hiera.yaml')
                 config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
                 # TODO: afegir opció auth_strings - array per varis subprojectes
-                hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml, hieradata_base_dir=config_repo_path+'/hieradata', puppet_fqdn=puppet_fqdn, puppet_port=puppet_master_port)
+                hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml, hieradata_base_dir=config_repo_path+'/hieradata', puppet_fqdn=puppet_fqdn, puppet_port=puppet_master_port, create_skel_auth_strings=projects_authstrings)
                 config_repo_hierayaml.close()
 
             git_config_repo.add('--all')
