@@ -377,8 +377,8 @@ if __name__ == '__main__':
             git_config_repo.branch('production')
             git_config_repo.checkout('production')
             git_config_repo.branch('-d', 'master')
+            git_config_repo.push('-u', 'origin', 'production')
             git_config_repo.pull('origin', 'production', '--allow-unrelated-histories', '--no-edit')
-            git_config_repo.push('origin', 'production')
 
             if debug:
                 print(instance+': CONFIG repo push origin production')
