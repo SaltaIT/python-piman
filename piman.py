@@ -91,7 +91,7 @@ def get_free_tcp_port(base_port):
 
     return candidate_port
 
-def randomStringDigits(size=10):
+def random_string_lowercase_digits(size=10):
     lowercase_and_digits = string.ascii_lowercase + string.digits
     return ''.join(random.choice(lowercase_and_digits) for i in range(size))
 
@@ -261,7 +261,7 @@ if __name__ == '__main__':
 
                 projects_authstrings=[]
                 for project in projects:
-                    project_auth_string = project+'_'+randomStringDigits()
+                    project_auth_string = project+'_'+random_string_lowercase_digits()
                     projects_authstrings.append(project_auth_string)
                     if debug:
                         print("for project "+project+" auth string: "+project_auth_string)
@@ -283,6 +283,8 @@ if __name__ == '__main__':
                     docker_compose_override.write('  puppetboard:\n')
                     docker_compose_override.write('    ports:\n')
                     docker_compose_override.write('      - '+str(puppet_board_port)+':80/tcp\n')
+                    docker_compose_override.write('    environment:\n')
+                    docker_compose_override.write("      EYP_PUPPETBOARD_PASSWORD: \'"+random_string_lowercase_digits(15)+"\'")
                 docker_compose_override.write('  puppetdb:\n')
                 docker_compose_override.write('    environment:\n')
                 docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'\n")
