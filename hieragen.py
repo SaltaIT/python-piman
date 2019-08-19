@@ -39,6 +39,11 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
         auth_facts = []
 
     try:
+        auth_facts_separator = json.loads(config.get('hieragen','auth-facts-separator'))
+    except:
+        auth_facts_separator = '_'
+
+    try:
         include_override = config.get('hieragen','include-override')
     except:
         include_override = True
@@ -65,7 +70,7 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
     for fact in auth_facts:
         formated_auth_facts.append("%{::"+fact+"}")
 
-    auth_string = "_".join(formated_auth_facts)+'/'
+    auth_string = auth_facts_separator.join(formated_auth_facts)+'/'
 
     if debug:
         eprint('auth_string:'+auth_string)
