@@ -305,7 +305,7 @@ if __name__ == '__main__':
                 if debug:
                     print(instance+': generating hiera.yaml')
                 config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
-                # TODO: afegir opció auth_string
+                # TODO: afegir opció auth_strings - array per varis subprojectes
                 hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml, hieradata_base_dir=config_repo_path+'/hieradata', puppet_fqdn=puppet_fqdn, puppet_port=puppet_master_port)
                 config_repo_hierayaml.close()
 
