@@ -261,7 +261,10 @@ if __name__ == '__main__':
 
                 projects_authstrings=[]
                 for project in projects:
-                    projects_authstrings.append(project+'_'+randomStringDigits())
+                    project_auth_string = project+'_'+randomStringDigits()
+                    projects_authstrings.append(project_auth_string)
+                    if debug:
+                        print("for project "+project+" auth string: "+project_auth_string)
 
                 puppet_master_port = get_free_tcp_port(base_port)
                 puppet_board_port = get_free_tcp_port(int(puppet_master_port)+1)
