@@ -32,6 +32,11 @@ def generatehieradataskel(config_file, hieradata_base_dir='', create_skel_auth_s
     config.read(config_file)
 
     try:
+        debug = config.getboolean('hieragen', 'debug')
+    except:
+        debug = False
+
+    try:
         unauth_common_area = config.get('hieragen','unauth-common-area')
     except:
         unauth_common_area = True
