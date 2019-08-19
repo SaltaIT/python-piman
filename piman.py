@@ -285,7 +285,7 @@ if __name__ == '__main__':
                     docker_compose_override.write('    ports:\n')
                     docker_compose_override.write('      - '+str(puppet_board_port)+':80/tcp\n')
                     docker_compose_override.write('    environment:\n')
-                    docker_compose_override.write("      EYP_PUPPETBOARD_PASSWORD: \'"+random_string_lowercase_digits(15)+"\'")
+                    docker_compose_override.write("      EYP_PUPPETBOARD_PASSWORD: '"+random_string_lowercase_digits(15)+"'\n")
                 docker_compose_override.write('  puppetdb:\n')
                 docker_compose_override.write('    environment:\n')
                 docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'\n")
