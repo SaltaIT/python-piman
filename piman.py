@@ -217,6 +217,10 @@ if __name__ == '__main__':
             except:
                 append_random_string = True
 
+            #
+            # instance repo
+            #
+
             instance_repo_path = base_dir+'/'+instance+'/instance'
             os.makedirs(name=instance_repo_path, exist_ok=True)
 
@@ -318,7 +322,9 @@ if __name__ == '__main__':
                     print(instance+': INSTANCE repo push origin master')
 
 
+            #
             # config repo
+            #
             config_repo_path = base_dir+'/'+instance+'/.tmp_config_repo'
             os.makedirs(name=config_repo_path, exist_ok=True)
 
@@ -383,3 +389,5 @@ if __name__ == '__main__':
 
             if debug:
                 print(instance+': CONFIG repo push origin production')
+
+            #TODO: repo files init
