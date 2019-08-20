@@ -199,10 +199,10 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
                 puppet_agent_config = open(hieradata_base_dir+"/puppet-agent-config.yaml","w+")
                 puppet_agent_config.write("---\n")
                 puppet_agent_config.write("classes:\n")
-                puppet_agent_config.write("  - puppet::client\n")
-                puppet_agent_config.write("puppet::client::puppetmaster: "+puppet_fqdn+"\n")
+                puppet_agent_config.write("  - puppet::agent\n")
+                puppet_agent_config.write("puppet::agent::puppetmaster: "+puppet_fqdn+"\n")
                 if puppet_port:
-                    puppet_agent_config.write("puppet::client::puppetmasterport: "+str(puppet_port)+"\n")
+                    puppet_agent_config.write("puppet::agent::puppetmasterport: "+str(puppet_port)+"\n")
                 puppet_agent_config.close()
 
         generatehieradataskel(config_file, hieradata_base_dir, create_skel_auth_strings)
