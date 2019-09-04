@@ -34,6 +34,7 @@ def generatesitepp(config_file, write_sitepp_to=sys.stdout):
         debug = False
 
     print('''
+
 #
 # file
 #
@@ -176,7 +177,6 @@ create_resources(proftpd::user, $ftpusers)
 # eyp-sudoers
 #
 
-
 $sudos = hiera_hash('sudos', {})
 create_resources(sudoers::sudo, $sudos)
 
@@ -184,8 +184,13 @@ create_resources(sudoers::sudo, $sudos)
 # eyp-named
 #
 
-$zones = hiera_hash('zones', {})
-create_resources(named::zone, $zones)
+create_resources(named::zone, hiera_hash('zones', {}))
+create_resources(named::zone, hiera_hash('namedzones', {}))
+create_resources(named::zone::arecord, hiera_hash('namedzonearecords', {}))
+create_resources(named::zone::cnamerecord, hiera_hash('namedzonecnamerecords', {}))
+create_resources(named::zone::srvrecord, hiera_hash('namedzonesrvrecords', {}))
+create_resources(named::zone::locrecord, hiera_hash('namedzonelocrecords', {}))
+create_resources(named::zone::txtrecord, hiera_hash('namedzonetxtrecords', {}))
 
 #
 # puppetlabs-apt
@@ -331,31 +336,29 @@ create_resources(apache::logformat, $apachelogformats)
 $apachevhostadauths= hiera_hash('apachevhostadauths', {})
 create_resources(apache::vhost::adauth, $apachevhostadauths)
 
+#
+# eyp-prometheus
+#
+
+create_resources(prometheus::job, hiera_hash('prometheusjobs', {}))
 
 #
 # eyp-nginx
 #
 
-$nginxvhosts= hiera_hash('nginxvhosts', {})
-create_resources(nginx::vhost, $nginxvhosts)
-
-$nginxproxypass= hiera_hash('nginxproxypass', {})
-create_resources(nginx::proxypass, $nginxproxypass)
-
-$nginxstubstatus= hiera_hash('nginxstubstatus', {})
-create_resources(nginx::stubstatus, $nginxstubstatus)
-
-create_resources(nginx::custom_conf, hiera_hash('nginxcustomconfs', {}))
-
+create_resources(nginx::vhost, hiera_hash('nginxvhosts', {}))
 create_resources(nginx::cert, hiera_hash('nginxcerts', {}))
-
-create_resources(nginx::proxyredirect, hiera_hash('nginxproxyredirects', {}))
-
-create_resources(nginx::redirect, hiera_hash('nginxredirects', {}))
-
 create_resources(nginx::htuser, hiera_hash('nginxhtusers', {}))
-
 create_resources(nginx::location, hiera_hash('nginxlocations', {}))
+create_resources(nginx::redirect, hiera_hash('nginxredirects', {}))
+create_resources(nginx::proxypass, hiera_hash('nginxproxypass', {}))
+create_resources(nginx::stubstatus, hiera_hash('nginxstubstatus', {}))
+create_resources(nginx::proxypass, hiera_hash('nginxproxypasses', {}))
+create_resources(nginx::proxycache, hiera_hash('nginxproxycaches', {}))
+create_resources(nginx::custom_conf, hiera_hash('nginxcustomconfs', {}))
+create_resources(nginx::proxyredirect, hiera_hash('nginxproxyredirects', {}))
+create_resources(nginx::proxycachepath, hiera_hash('nginxproxycachepaths', {}))
+create_resources(nginx::proxysetheader, hiera_hash('nginxproxysetheaders', {}))
 
 #
 # eyp-logstash
@@ -880,9 +883,25 @@ create_resources(sslh::protocol, hiera_hash('sslhprotocols', {}))
 # eyp-haproxy
 #
 
+create_resources(haproxy::stats, hiera_hash('haproxystats', {}))
 create_resources(haproxy::balancer, hiera_hash('haproxybalancers', {}))
 create_resources(haproxy::balancer::server, hiera_hash('haproxybalancerservers', {}))
-create_resources(haproxy::stats, hiera_hash('haproxystats', {}))
+create_resources(haproxy::frontend, hiera_hash('haproxyfrontends', {}))
+create_resources(haproxy::frontend::acl, hiera_hash('haproxyfrontendacls', {}))
+create_resources(haproxy::frontend::server, hiera_hash('haproxyfrontendservers', {}))
+create_resources(haproxy::frontend::usebackend, hiera_hash('haproxyfrontendusebackends', {}))
+create_resources(haproxy::frontend::tcp_request_connection, hiera_hash('haproxyfrontendtcprequestconnections', {}))
+create_resources(haproxy::backend, hiera_hash('haproxybackends', {}))
+create_resources(haproxy::backend::acl, hiera_hash('haproxybackendacls', {}))
+create_resources(haproxy::backend::server, hiera_hash('haproxybackendservers', {}))
+create_resources(haproxy::backend::http_request_deny, hiera_hash('haproxybackendhttprequestdenys', {}))
+
+#
+# eyp-openvpn
+#
+
+create_resources(openvpn::server, hiera_hash('openvpnservers', {}))
+create_resources(openvpn::server::clientcert, hiera_hash('openvpnserverclientcerts', {}))
 
 #
 # eyp-iptables
