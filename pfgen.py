@@ -31,9 +31,9 @@ def printPuppetfileItem(modulename, url, tag):
     #    :git => 'https://github.com/NTTCom-MS/eyp-apache',
     #    :tag => '0.6.3'
     print("mod '"+modulename+"',", file=write_to)
-    print("   :git => '"+url+"'", end="", file=write_to)
+    print("  :git => '"+url+"'", end="", file=write_to)
     if tag:
-        print(",\n   :tag => '"+tag+"'", file=write_to)
+        print(",\n  :tag => '"+tag+"'", file=write_to)
     else:
         print("", file=write_to)
 
