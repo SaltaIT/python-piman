@@ -62,7 +62,7 @@ def generatesitepp(config_file, write_sitepp_to=sys.stdout):
        while resource_name:
            resource_alias = resource_name.strip(':').strip()+"s"
            print_resource(resource_name, resource_alias)
-           resource_name = resource_file_handler.readline()
+           resource_name = resource_file_handler.readline().rstrip(os.linesep).strip('"').strip("'").strip()
 
     try:
         deep_include_classes = json.loads(config.get('sitegen','deep-include-classes'))
