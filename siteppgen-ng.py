@@ -60,7 +60,7 @@ def generatesitepp(config_file, write_sitepp_to=sys.stdout):
     with open(resource_file) as resource_file_handler:
        resource_name = resource_file_handler.readline().rstrip(os.linesep).strip('"').strip("'").strip()
        while resource_name:
-           resource_alias = resource_name.strip(':').strip()+"s"
+           resource_alias = resource_name.replace(':','').strip()+"s"
            print_resource(resource_name, resource_alias)
            resource_name = resource_file_handler.readline().rstrip(os.linesep).strip('"').strip("'").strip()
 
