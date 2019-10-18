@@ -270,8 +270,21 @@ if __name__ == '__main__':
                     if debug:
                         print("for project "+project+" auth string: "+project_auth_string)
 
-                puppet_master_port = get_free_tcp_port(base_port)
-                puppet_board_port = get_free_tcp_port(int(puppet_master_port)+1)
+                try:
+                    puppet_master_port = config.get(instance, 'puppet-master-port').strip('"').strip("'").strip()
+                except:
+                    puppet_master_port = None
+
+                try:
+                    puppet_board_port = config.get(instance, 'puppet-board-port').strip('"').strip("'").strip()
+                except:
+                    puppet_board_port = None
+
+                if not puppet_master_port:
+                    puppet_master_port = get_free_tcp_port(base_port)
+
+                if not puppet_board_port:
+                    puppet_board_port = get_free_tcp_port(int(puppet_master_port)+1)
 
                 save_puppet_details_to_file(puppet_fqdn, puppet_master_port, puppet_board_port, projects_authstrings, instance_repo_path+'/.piman.data')
 
