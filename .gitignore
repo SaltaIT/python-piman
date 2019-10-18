@@ -3,8 +3,5 @@ venv
 *~
 *swp
 *.config
-fites/*
-preguntes/*
-temari/*
-*.sqlite
 __pycache__/*
+demos/*
