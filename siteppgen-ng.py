@@ -20,10 +20,13 @@ def eprint(*args, **kwargs):
     if debug:
         print(*args, file=sys.stderr, **kwargs)
 
-def print_resource(resource_name, resource_alias):
+def print_resource(resource_name, resource_alias, strategy='deep'):
     global debug, write_to
 
     # lookup( <NAME>, [<VALUE TYPE>], [<MERGE BEHAVIOR>], [<DEFAULT VALUE>] )
+    print("", file=write_to)
+    # print("$resource_alias = lookup('"+resource_alias+"', undef, '"+strategy+"', {})", file=write_to)
+    print("$resource_alias = lookup('"+resource_alias+"', {}, '"+strategy+"', {})", file=write_to)
     # create_resources(postgresql::schema, $postgresschemas)
     print("create_resources("+resource_name+", $"+resource_alias+")", file=write_to)
 
@@ -50,10 +53,17 @@ def generatesitepp(config_file, write_sitepp_to=sys.stdout):
     except:
         resource_hash = {}
 
+    try:
+        deep_include_classes = json.loads(config.get('sitegen','deep-include-classes'))
+    except:
+        deep_include_classes = []
+
+    # resource_hash
     for resource_alias in resource_hash:
         # print resource hash
         print_resource(resource_hash[resource_alias], resource_alias)
 
+    # resource_file
     if not os.path.isfile(resource_file):
         eprint("WARNING: resource-file ("+resource_file+") not found, ignoring resources")
 
@@ -64,13 +74,22 @@ def generatesitepp(config_file, write_sitepp_to=sys.stdout):
            print_resource(resource_name, resource_alias)
            resource_name = resource_file_handler.readline().rstrip(os.linesep).strip('"').strip("'").strip()
 
-    try:
-        deep_include_classes = json.loads(config.get('sitegen','deep-include-classes'))
-    except:
-        deep_include_classes = []
+    for resource_alias in config.sections():
+        if resource_alias!="sitegen":
+            try:
+                merge_strategy = config.get(resource_alias, 'merge-strategy').strip('"').strip("'").strip()
+            except:
+                merge_strategy = 'deep'
+
+            try:
+                resource_name = config.get(resource_alias, 'resource-name').strip('"').strip("'").strip()
+                print_resource(resource_name, resource_alias, merge_strategy)
+            except:
+                eprint("WARNING: skipping "+resource_alias+": resource-name not found")
 
     # lookup('classes', Array[String], 'deep').include
     for deep_include_class in deep_include_classes:
+        print("", file=write_to)
         print("lookup('"+deep_include_class+"', Array[String], 'deep').include", file=write_to)
 
 
