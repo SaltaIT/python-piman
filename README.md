@@ -1,4 +1,4 @@
-# python-p5tools
+# python-piman
 
 ## piman - Puppet Instance MANager
 
