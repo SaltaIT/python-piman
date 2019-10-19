@@ -26,7 +26,7 @@ def print_resource(resource_name, resource_alias, strategy='deep'):
     # lookup( <NAME>, [<VALUE TYPE>], [<MERGE BEHAVIOR>], [<DEFAULT VALUE>] )
     print("", file=write_to)
     # print("$resource_alias = lookup('"+resource_alias+"', undef, '"+strategy+"', {})", file=write_to)
-    print("$resource_alias = lookup('"+resource_alias+"', {}, '"+strategy+"', {})", file=write_to)
+    print("$"+resource_alias" = lookup("+resource_alias+", Hash, "+strategy+", {})", file=write_to)
     # create_resources(postgresql::schema, $postgresschemas)
     print("create_resources("+resource_name+", $"+resource_alias+")", file=write_to)
 
