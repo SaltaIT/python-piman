@@ -394,8 +394,10 @@ if __name__ == '__main__':
             except:
                 pass
 
+            # TODO: afegir condicional
             git_config_repo.branch('production')
             git_config_repo.checkout('production')
+            # TODO: afegir condicional
             git_config_repo.branch('-d', 'master')
             git_config_repo.push('-u', 'origin', 'production')
             git_config_repo.pull('origin', 'production', '--allow-unrelated-histories', '--no-edit')
