@@ -411,7 +411,7 @@ if __name__ == '__main__':
 
                 start_sh_fh = open(instance_helpers_path+'/start.sh', "w+")
                 print('#!/bin/bash', file=start_sh_fh)
-                print('cd '+instance_repo_path, file=start_sh_fh
+                print('cd '+instance_repo_path, file=start_sh_fh)
                 print('docker-compose -p '+instance+' up -d', file=update_sh_fh)
                 print('cd $OLDPWD', file=start_sh_fh)
 
