@@ -46,7 +46,7 @@ def generatehieradataskel(config_file, hieradata_base_dir='', create_skel_auth_s
 
     for project_id in create_skel_auth_strings:
         if debug:
-            eprint("SKEL for "+project_id+": "+hieradata_base_dir+project_id)
+            eprint("SKEL for "+project_id+": "+hieradata_base_dir+'/'+project_id)
         for dir_name in [ '/env', '/hierarchy', '/type', '/servergroup', '/node', '/config-catalog' ]:
             mkdir_gitkeep(hieradata_base_dir+'/'+project_id+'/'+dir_name)
 

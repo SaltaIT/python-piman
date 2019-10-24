@@ -403,4 +403,24 @@ if __name__ == '__main__':
             if debug:
                 print(instance+': CONFIG repo push origin production')
 
-            #TODO: repo files init
+            instance_helpers_path = base_dir+'/'+instance
+
+            if not os.path.isfile(instance_helpers_path+'/start.sh'):
+                if debug:
+                    print(instance+': generating start.sh')
+
+                start_sh_fh = open(instance_helpers_path+'/start.sh', "w+")
+                print('#!/bin/bash', file=start_sh_fh)
+                print('cd '+instance_repo_path, file=start_sh_fh)
+                print('docker-compose -p '+instance+' up -d', file=start_sh_fh)
+                print('cd $OLDPWD', file=start_sh_fh)
+
+            if not os.path.isfile(instance_helpers_path+'/update.sh'):
+                if debug:
+                    print(instance+': generating update.sh')
+
+                update_sh_fh = open(instance_helpers_path+'/update.sh', "w+")
+                print('#!/bin/bash', file=update_sh_fh)
+                print('cd '+instance_repo_path, file=update_sh_fh)
+                print('docker-compose -p '+instance+' exec puppetmaster /usr/local/bin/updatepuppet.sh', file=update_sh_fh)
+                print('cd $OLDPWD', file=update_sh_fh)
