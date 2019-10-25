@@ -394,8 +394,10 @@ if __name__ == '__main__':
             except:
                 pass
 
+            # TODO: afegir condicional
             git_config_repo.branch('production')
             git_config_repo.checkout('production')
+            # TODO: afegir condicional
             git_config_repo.branch('-d', 'master')
             git_config_repo.push('-u', 'origin', 'production')
             git_config_repo.pull('origin', 'production', '--allow-unrelated-histories', '--no-edit')
@@ -411,8 +413,8 @@ if __name__ == '__main__':
 
                 start_sh_fh = open(instance_helpers_path+'/start.sh', "w+")
                 print('#!/bin/bash', file=start_sh_fh)
-                print('cd '+instance_repo_path, file=start_sh_fh
-                print('docker-compose -p '+instance+' up -d', file=update_sh_fh)
+                print('cd '+instance_repo_path, file=start_sh_fh)
+                print('docker-compose -p '+instance+' up -d', file=start_sh_fh)
                 print('cd $OLDPWD', file=start_sh_fh)
 
             if not os.path.isfile(instance_helpers_path+'/update.sh'):
