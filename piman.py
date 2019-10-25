@@ -394,15 +394,18 @@ if __name__ == '__main__':
             except:
                 pass
 
-            grep_production_output = sh.grep(sh.git('branch'), '* production')
-            if grep_production_output.exit_code != 0:
+            try:
                 git_config_repo.branch('production')
+            except:
+                pass
+
+            git_config_repo.checkout('production')
+
             try:
                 git_config_repo.branch('-d', 'master')
             except:
                 pass
 
-            git_config_repo.checkout('production')
             git_config_repo.push('-u', 'origin', 'production')
             git_config_repo.pull('origin', 'production', '--allow-unrelated-histories', '--no-edit')
 
