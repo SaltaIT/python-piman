@@ -74,6 +74,7 @@ logstash::tcpinput
 modprobe::install
 modprobe::option
 monit::checkscript
+mosquitto::user
 mount
 multipathd::alias
 mysql::backupmysqldump
