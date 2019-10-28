@@ -365,7 +365,7 @@ if __name__ == '__main__':
             # Puppetfile
             if not os.path.isfile(config_repo_path+'/Puppetfile'):
                 if debug:
-                    print(instance+': generating Puppetfile')
+                    print(instance+': generating '+config_repo_path+'/Puppetfile')
                 config_repo_puppetfile = open(config_repo_path+'/Puppetfile', "w+")
                 pfgen.generatePuppetfile(config_file=pfgen_config, write_puppetfile_to=config_repo_puppetfile)
                 config_repo_puppetfile.close()
@@ -373,7 +373,7 @@ if __name__ == '__main__':
             # site.pp
             if not os.path.isfile(config_repo_path+'/manifests/site.pp'):
                 if debug:
-                    print(instance+': generating site.pp')
+                    print(instance+': generating '+config_repo_path+'/manifests/site.pp')
                 os.makedirs(name=config_repo_path+'/manifests', exist_ok=True)
                 config_repo_sitepp = open(config_repo_path+'/site.pp', "w+")
                 siteppgen.generatesitepp(config_file=sitepp_config, write_sitepp_to=config_repo_sitepp)
@@ -382,7 +382,7 @@ if __name__ == '__main__':
             # hiera.yaml
             if not os.path.isfile(config_repo_path+'/hiera.yaml'):
                 if debug:
-                    print(instance+': generating hiera.yaml')
+                    print(instance+': generating '+config_repo_path+'/hiera.yaml')
                 config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
 
                 if debug:
