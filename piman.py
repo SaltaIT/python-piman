@@ -375,7 +375,7 @@ if __name__ == '__main__':
                 if debug:
                     print(instance+': generating '+config_repo_path+'/manifests/site.pp')
                 os.makedirs(name=config_repo_path+'/manifests', exist_ok=True)
-                config_repo_sitepp = open(config_repo_path+'/site.pp', "w+")
+                config_repo_sitepp = open(config_repo_path+'/manifests/site.pp', "w+")
                 siteppgen.generatesitepp(config_file=sitepp_config, write_sitepp_to=config_repo_sitepp)
                 config_repo_sitepp.close()
 
