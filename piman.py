@@ -158,19 +158,24 @@ if __name__ == '__main__':
         base_port = 8240
 
     try:
+        config_dir = config.get('piman', 'config-dir')
+    except:
+        config_dir = '.'
+
+    try:
         pfgen_config = config.get('piman', 'pfgen-config')
     except:
-        pfgen_config = './pfgen.config'
+        pfgen_config = config_dir+'/pfgen.config'
 
     try:
         hierayaml_config = config.get('piman', 'hierayaml-config')
     except:
-        hierayaml_config = './hieragen.config'
+        hierayaml_config = config_dir+'/hieragen.config'
 
     try:
         sitepp_config = config.get('piman', 'sitepp-config')
     except:
-        sitepp_config = './siteppgen.config'
+        sitepp_config = config_dir+'/siteppgen.config'
 
     try:
         enable_puppetboard = config.getboolean('piman', 'enable-puppetboard')
