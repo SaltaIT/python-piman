@@ -129,6 +129,14 @@ merge-strategy = deep
 resource-name = sudoers::sudo
 merge-strategy = deep
 
+[security_limits]
+resource-name = pam::limit
+merge-strategy = deep
+
+[modprobeinstall]
+resource-name = modprobe::install
+merge-strategy = deep
+
 [haproxystats]
 resource-name = haproxy::stats
 
