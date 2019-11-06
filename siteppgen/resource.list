@@ -94,6 +94,7 @@ network::interface
 network::route
 nfs::export
 nfs::nfsmount
+ntp::cron
 nginx::cert
 nginx::custom_conf
 nginx::htuser
