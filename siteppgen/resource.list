@@ -36,6 +36,9 @@ bash::alias
 bash::environment
 bash::prompt
 bash::umask
+csit::pkg
+csit::postinstallscript
+csit::service
 couchbase::backupscript
 cron
 crond::grantuser
