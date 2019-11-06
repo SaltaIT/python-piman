@@ -453,3 +453,8 @@ if __name__ == '__main__':
             os.chmod(instance_repo_path+'/update.sh', stat_updatesh.st_mode | stat.S_IEXEC)
             if not os.path.isfile(instance_helpers_path+'/update.sh') and not os.path.islink(instance_helpers_path+'/update.sh'):
                 os.symlink(instance_repo_path+'/update.sh', instance_helpers_path+'/update.sh')
+
+            # commit helpers
+            git_instance_repo.add('--all')
+            git_instance_repo.commit('-vam', 'piman helpers - '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
+            git_instance_repo.push('origin', 'master')
