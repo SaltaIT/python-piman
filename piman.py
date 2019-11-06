@@ -429,7 +429,7 @@ if __name__ == '__main__':
                 if debug:
                     print(instance+': generating start.sh')
 
-                start_sh_fh = open(instance_helpers_path+'/start.sh', "w+")
+                start_sh_fh = open(instance_repo_path+'/start.sh', "w+")
                 print('#!/bin/bash', file=start_sh_fh)
                 print('cd '+instance_repo_path, file=start_sh_fh)
                 print('bash update.utils.sh', file=start_sh_fh)
@@ -439,7 +439,7 @@ if __name__ == '__main__':
             os.chmod(instance_repo_path+'/start.sh', stat_startsh.st_mode | stat.S_IEXEC)
             os.symlink(instance_repo_path+'/start.sh', instance_helpers_path+'/start.sh')
 
-            if not os.path.isfile(instance_helpers_path+'/update.sh'):
+            if not os.path.isfile(instance_repo_path+'/update.sh'):
                 if debug:
                     print(instance+': generating update.sh')
 
