@@ -437,7 +437,8 @@ if __name__ == '__main__':
                 print('cd $OLDPWD', file=start_sh_fh)
             stat_startsh = os.stat(instance_repo_path+'/start.sh')
             os.chmod(instance_repo_path+'/start.sh', stat_startsh.st_mode | stat.S_IEXEC)
-            os.symlink(instance_repo_path+'/start.sh', instance_helpers_path+'/start.sh')
+            if not os.path.islink(instance_helpers_path+'/start.sh'):
+                os.symlink(instance_repo_path+'/start.sh', instance_helpers_path+'/start.sh')
 
             if not os.path.isfile(instance_repo_path+'/update.sh'):
                 if debug:
@@ -450,4 +451,5 @@ if __name__ == '__main__':
                 print('cd $OLDPWD', file=update_sh_fh)
             stat_updatesh = os.stat(instance_repo_path+'/update.sh')
             os.chmod(instance_repo_path+'/update.sh', stat_updatesh.st_mode | stat.S_IEXEC)
-            os.symlink(instance_repo_path+'/update.sh', instance_helpers_path+'/update.sh')
+            if not os.path.islink(instance_helpers_path+'/update.sh'):
+                os.symlink(instance_repo_path+'/update.sh', instance_helpers_path+'/update.sh')
