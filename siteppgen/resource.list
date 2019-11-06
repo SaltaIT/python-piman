@@ -176,7 +176,6 @@ squid::followxff
 squid::httpaccess
 squid::logformat
 ssh_authorized_key
-sshkey
 sslh::protocol
 sudoers::sudo
 sysctl::set
