@@ -9,6 +9,7 @@ Puppet Instance MANager
 import sh
 import os
 import sys
+import stat
 import json
 import glob
 import pfgen
@@ -222,6 +223,10 @@ if __name__ == '__main__':
             except:
                 append_random_string = True
 
+            try:
+                bind_ip = config.get(instance,'bind-ip').strip('"').strip("'").strip()+':'
+            except:
+                bind_ip = ''
             #
             # instance repo
             #
@@ -313,7 +318,7 @@ if __name__ == '__main__':
                 docker_compose_override.write("      EYP_PUPPETDB_EXTERNAL_PORT: '"+str(puppet_master_port)+"'\n")
                 docker_compose_override.write("  puppetmaster:\n")
                 docker_compose_override.write("    ports:\n")
-                docker_compose_override.write("      - "+str(puppet_master_port)+":8140/tcp\n")
+                docker_compose_override.write("      - "+bind_ip+str(puppet_master_port)+":8140/tcp\n")
                 docker_compose_override.write("    environment:\n")
                 docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'\n")
                 docker_compose_override.write("      EYP_PM_SSL_REPO: '"+instance_ssl_remote+"'\n")
@@ -417,9 +422,10 @@ if __name__ == '__main__':
             if debug:
                 print(instance+': CONFIG repo push origin production')
 
-            instance_helpers_path = base_dir+'/'+instance
+            # deploy instance helpers
 
-            if not os.path.isfile(instance_helpers_path+'/start.sh'):
+            instance_helpers_path = base_dir+'/'+instance
+            if not os.path.isfile(instance_repo_path+'/start.sh'):
                 if debug:
                     print(instance+': generating start.sh')
 
@@ -429,13 +435,19 @@ if __name__ == '__main__':
                 print('bash update.utils.sh', file=start_sh_fh)
                 print('docker-compose -p '+instance+' up -d', file=start_sh_fh)
                 print('cd $OLDPWD', file=start_sh_fh)
+            stat_startsh = os.stat(instance_repo_path+'/start.sh')
+            os.chmod(instance_repo_path+'/start.sh', stat_startsh.st_mode | stat.S_IEXEC)
+            os.symlink(instance_repo_path+'/start.sh', instance_helpers_path+'/start.sh')
 
             if not os.path.isfile(instance_helpers_path+'/update.sh'):
                 if debug:
                     print(instance+': generating update.sh')
 
-                update_sh_fh = open(instance_helpers_path+'/update.sh', "w+")
+                update_sh_fh = open(instance_repo_path+'/update.sh', "w+")
                 print('#!/bin/bash', file=update_sh_fh)
                 print('cd '+instance_repo_path, file=update_sh_fh)
                 print('docker-compose -p '+instance+' exec puppetmaster /usr/local/bin/updatepuppet.sh', file=update_sh_fh)
                 print('cd $OLDPWD', file=update_sh_fh)
+            stat_updatesh = os.stat(instance_repo_path+'/update.sh')
+            os.chmod(instance_repo_path+'/update.sh', stat_updatesh.st_mode | stat.S_IEXEC)
+            os.symlink(instance_repo_path+'/update.sh', instance_helpers_path+'/update.sh')
