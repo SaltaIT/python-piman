@@ -14,7 +14,6 @@ from configparser import SafeConfigParser
 
 debug = False
 write_to = sys.stdout
-item_counter=0
 
 def eprint(*args, **kwargs):
     global debug
@@ -22,16 +21,14 @@ def eprint(*args, **kwargs):
         print(*args, file=sys.stderr, **kwargs)
 
 def print_resource(resource_name, resource_alias, strategy='deep'):
-    global debug, write_to, item_counter
+    global debug, write_to
 
     # lookup( <NAME>, [<VALUE TYPE>], [<MERGE BEHAVIOR>], [<DEFAULT VALUE>] )
     print("", file=write_to)
     # print("$resource_alias = lookup('"+resource_alias+"', undef, '"+strategy+"', {})", file=write_to)
-    print("$"+resource_alias+str(item_counter)+" = lookup("+resource_alias+", Hash, "+strategy+", {})", file=write_to)
+    print("$"+resource_alias+" = lookup("+resource_alias+", Hash, "+strategy+", {})", file=write_to)
     # create_resources(postgresql::schema, $postgresschemas)
-    print("create_resources("+resource_name+", $"+resource_alias+str(item_counter)+")", file=write_to)
-
-    item_counter-=-1
+    print("create_resources("+resource_name+", $"+resource_alias+")", file=write_to)
 
 def generatesitepp(config_file, write_sitepp_to=sys.stdout):
     global debug, write_to
