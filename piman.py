@@ -227,6 +227,12 @@ if __name__ == '__main__':
                 bind_ip = config.get(instance,'bind-ip').strip('"').strip("'").strip()+':'
             except:
                 bind_ip = ''
+
+            try:
+                add_default_network = config.getboolean(instance, 'add-default-network')
+            except:
+                add_default_network = False
+
             #
             # instance repo
             #
@@ -324,6 +330,9 @@ if __name__ == '__main__':
                 docker_compose_override.write("      EYP_PM_SSL_REPO: '"+instance_ssl_remote+"'\n")
                 docker_compose_override.write("      EYP_PM_CUSTOMER_REPO: '"+instance_config_remote+"'\n")
                 docker_compose_override.write("      EYP_PM_FILES_REPO: '"+instance_files_remote+"'\n")
+                if add_default_network:
+                    docker_compose_override.write("    networks:\n")
+                    docker_compose_override.write("      default: {}\n")
                 docker_compose_override.close()
 
                 git_instance_repo.add('--all')
