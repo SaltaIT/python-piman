@@ -171,6 +171,7 @@ service
 splunk::forwarder::monitor
 splunk::forwarder::outputs::tcpout
 squid::accesslog
+squid::cachestorelog
 squid::acl
 squid::domain
 squid::followxff
