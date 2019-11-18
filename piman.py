@@ -9,6 +9,7 @@ Puppet Instance MANager
 import sh
 import os
 import sys
+import stat
 import json
 import glob
 import pfgen
@@ -158,19 +159,24 @@ if __name__ == '__main__':
         base_port = 8240
 
     try:
+        config_dir = config.get('piman', 'config-dir')
+    except:
+        config_dir = '.'
+
+    try:
         pfgen_config = config.get('piman', 'pfgen-config')
     except:
-        pfgen_config = './pfgen.config'
+        pfgen_config = config_dir+'/pfgen.config'
 
     try:
         hierayaml_config = config.get('piman', 'hierayaml-config')
     except:
-        hierayaml_config = './hieragen.config'
+        hierayaml_config = config_dir+'/hieragen.config'
 
     try:
         sitepp_config = config.get('piman', 'sitepp-config')
     except:
-        sitepp_config = './siteppgen.config'
+        sitepp_config = config_dir+'/siteppgen.config'
 
     try:
         enable_puppetboard = config.getboolean('piman', 'enable-puppetboard')
@@ -216,6 +222,16 @@ if __name__ == '__main__':
                 append_random_string = config.getboolean(instance, 'projects-append-randomstring')
             except:
                 append_random_string = True
+
+            try:
+                bind_ip = config.get(instance,'bind-ip').strip('"').strip("'").strip()+':'
+            except:
+                bind_ip = ''
+
+            try:
+                add_default_network = config.getboolean(instance, 'add-default-network')
+            except:
+                add_default_network = False
 
             #
             # instance repo
@@ -308,12 +324,15 @@ if __name__ == '__main__':
                 docker_compose_override.write("      EYP_PUPPETDB_EXTERNAL_PORT: '"+str(puppet_master_port)+"'\n")
                 docker_compose_override.write("  puppetmaster:\n")
                 docker_compose_override.write("    ports:\n")
-                docker_compose_override.write("      - "+str(puppet_master_port)+":8140/tcp\n")
+                docker_compose_override.write("      - "+bind_ip+str(puppet_master_port)+":8140/tcp\n")
                 docker_compose_override.write("    environment:\n")
                 docker_compose_override.write("      EYP_PUPPETFQDN: '"+puppet_fqdn+"'\n")
                 docker_compose_override.write("      EYP_PM_SSL_REPO: '"+instance_ssl_remote+"'\n")
                 docker_compose_override.write("      EYP_PM_CUSTOMER_REPO: '"+instance_config_remote+"'\n")
                 docker_compose_override.write("      EYP_PM_FILES_REPO: '"+instance_files_remote+"'\n")
+                if add_default_network:
+                    docker_compose_override.write("    networks:\n")
+                    docker_compose_override.write("      default: {}\n")
                 docker_compose_override.close()
 
                 git_instance_repo.add('--all')
@@ -360,7 +379,7 @@ if __name__ == '__main__':
             # Puppetfile
             if not os.path.isfile(config_repo_path+'/Puppetfile'):
                 if debug:
-                    print(instance+': generating Puppetfile')
+                    print(instance+': generating '+config_repo_path+'/Puppetfile')
                 config_repo_puppetfile = open(config_repo_path+'/Puppetfile', "w+")
                 pfgen.generatePuppetfile(config_file=pfgen_config, write_puppetfile_to=config_repo_puppetfile)
                 config_repo_puppetfile.close()
@@ -368,16 +387,16 @@ if __name__ == '__main__':
             # site.pp
             if not os.path.isfile(config_repo_path+'/manifests/site.pp'):
                 if debug:
-                    print(instance+': generating site.pp')
+                    print(instance+': generating '+config_repo_path+'/manifests/site.pp')
                 os.makedirs(name=config_repo_path+'/manifests', exist_ok=True)
-                config_repo_sitepp = open(config_repo_path+'/site.pp', "w+")
+                config_repo_sitepp = open(config_repo_path+'/manifests/site.pp', "w+")
                 siteppgen.generatesitepp(config_file=sitepp_config, write_sitepp_to=config_repo_sitepp)
                 config_repo_sitepp.close()
 
             # hiera.yaml
             if not os.path.isfile(config_repo_path+'/hiera.yaml'):
                 if debug:
-                    print(instance+': generating hiera.yaml')
+                    print(instance+': generating '+config_repo_path+'/hiera.yaml')
                 config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
 
                 if debug:
@@ -394,35 +413,57 @@ if __name__ == '__main__':
             except:
                 pass
 
-            # TODO: afegir condicional
-            git_config_repo.branch('production')
+            try:
+                git_config_repo.branch('production')
+            except:
+                pass
+
             git_config_repo.checkout('production')
-            # TODO: afegir condicional
-            git_config_repo.branch('-d', 'master')
+
+            try:
+                git_config_repo.branch('-d', 'master')
+            except:
+                pass
+
             git_config_repo.push('-u', 'origin', 'production')
             git_config_repo.pull('origin', 'production', '--allow-unrelated-histories', '--no-edit')
 
             if debug:
                 print(instance+': CONFIG repo push origin production')
 
-            instance_helpers_path = base_dir+'/'+instance
+            # deploy instance helpers
 
-            if not os.path.isfile(instance_helpers_path+'/start.sh'):
+            instance_helpers_path = base_dir+'/'+instance
+            if not os.path.isfile(instance_repo_path+'/start.sh'):
                 if debug:
                     print(instance+': generating start.sh')
 
-                start_sh_fh = open(instance_helpers_path+'/start.sh', "w+")
+                start_sh_fh = open(instance_repo_path+'/start.sh', "w+")
                 print('#!/bin/bash', file=start_sh_fh)
                 print('cd '+instance_repo_path, file=start_sh_fh)
+                print('bash update.utils.sh', file=start_sh_fh)
                 print('docker-compose -p '+instance+' up -d', file=start_sh_fh)
                 print('cd $OLDPWD', file=start_sh_fh)
+            stat_startsh = os.stat(instance_repo_path+'/start.sh')
+            os.chmod(instance_repo_path+'/start.sh', stat_startsh.st_mode | stat.S_IEXEC)
+            if not os.path.isfile(instance_helpers_path+'/start.sh') and not os.path.islink(instance_helpers_path+'/start.sh'):
+                os.symlink(instance_repo_path+'/start.sh', instance_helpers_path+'/start.sh')
 
-            if not os.path.isfile(instance_helpers_path+'/update.sh'):
+            if not os.path.isfile(instance_repo_path+'/update.sh'):
                 if debug:
                     print(instance+': generating update.sh')
 
-                update_sh_fh = open(instance_helpers_path+'/update.sh', "w+")
+                update_sh_fh = open(instance_repo_path+'/update.sh', "w+")
                 print('#!/bin/bash', file=update_sh_fh)
                 print('cd '+instance_repo_path, file=update_sh_fh)
                 print('docker-compose -p '+instance+' exec puppetmaster /usr/local/bin/updatepuppet.sh', file=update_sh_fh)
                 print('cd $OLDPWD', file=update_sh_fh)
+            stat_updatesh = os.stat(instance_repo_path+'/update.sh')
+            os.chmod(instance_repo_path+'/update.sh', stat_updatesh.st_mode | stat.S_IEXEC)
+            if not os.path.isfile(instance_helpers_path+'/update.sh') and not os.path.islink(instance_helpers_path+'/update.sh'):
+                os.symlink(instance_repo_path+'/update.sh', instance_helpers_path+'/update.sh')
+
+            # commit helpers
+            git_instance_repo.add('--all')
+            git_instance_repo.commit('-vam', 'piman helpers - '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
+            git_instance_repo.push('origin', 'master')

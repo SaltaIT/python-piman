@@ -36,6 +36,9 @@ bash::alias
 bash::environment
 bash::prompt
 bash::umask
+csit::pkg
+csit::postinstallscript
+csit::service
 couchbase::backupscript
 cron
 crond::grantuser
@@ -95,6 +98,7 @@ network::interface
 network::route
 nfs::export
 nfs::nfsmount
+ntp::cron
 nginx::cert
 nginx::custom_conf
 nginx::htuser
@@ -173,7 +177,6 @@ squid::followxff
 squid::httpaccess
 squid::logformat
 ssh_authorized_key
-sshkey
 sslh::protocol
 sudoers::sudo
 sysctl::set
