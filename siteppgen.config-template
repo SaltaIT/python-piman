@@ -1,7 +1,7 @@
 [sitegen]
 debug = true
 deep-include-classes = [ "classes" ]
-resource-file = ./siteppgen/resource.list
+resource-file = /etc/piman/siteppgen/resource.list
 resource-hash = { "cronjobs": "cron", "crontabs": "cron" }
  
 [common_packages]
