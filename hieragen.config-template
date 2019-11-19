@@ -1,0 +1,4 @@
+[hieragen]
+
+debug = true
+auth-facts = [ "eypconf_platformid", "eypconf_magic_hash" ]

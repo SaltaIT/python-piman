@@ -1,0 +1,17 @@
+[piman]
+base-dir = /opt/puppet-instances
+instance-template = https://github.com/jordiprats/docker-puppetmaster5
+puppet-fqdn = puppet.systemadmin.es
+base-port = 8140
+debug = true
+
+pfgen-config = /etc/piman/pfgen.config
+
+[demo]
+
+projects = [ "demo" ]
+
+config = git@gitlab.com:demoproject/demo-config.git
+ssl = git@gitlab.com:demoproject/demo-ssl.git
+files = git@gitlab.com:demoproject/demo-files.git
+instance = git@gitlab.com:demoproject/demo-instance.git
