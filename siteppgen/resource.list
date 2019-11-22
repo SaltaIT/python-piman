@@ -36,12 +36,12 @@ bash::alias
 bash::environment
 bash::prompt
 bash::umask
-csit::pkg
-csit::postinstallscript
-csit::service
 couchbase::backupscript
 cron
 crond::grantuser
+csit::pkg
+csit::postinstallscript
+csit::service
 cups::dummyqueue
 exec
 file
@@ -98,7 +98,6 @@ network::interface
 network::route
 nfs::export
 nfs::nfsmount
-ntp::cron
 nginx::cert
 nginx::custom_conf
 nginx::htuser
@@ -112,6 +111,7 @@ nginx::redirect
 nginx::stubstatus
 nginx::vhost
 npmpackage
+ntp::cron
 openldap::backupscript
 openscap::scanner::profile
 openscap::scanner::xccdf
@@ -160,6 +160,8 @@ proftpd::user
 prometheus::job
 puppet::agent::cron
 purgefiles::cronjob
+pythonpip
+pythonpip3
 rhn::repo
 rsync::scheduledrsync
 rsyslog::facility
@@ -171,8 +173,8 @@ service
 splunk::forwarder::monitor
 splunk::forwarder::outputs::tcpout
 squid::accesslog
-squid::cachestorelog
 squid::acl
+squid::cachestorelog
 squid::domain
 squid::followxff
 squid::httpaccess
@@ -217,5 +219,3 @@ wordpress::site
 xvfb::instance
 yumrepo
 yum::reposync
-pythonpip
-pythonpip3
