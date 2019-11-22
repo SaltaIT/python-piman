@@ -217,3 +217,5 @@ wordpress::site
 xvfb::instance
 yumrepo
 yum::reposync
+pythonpip
+pythonpip3
