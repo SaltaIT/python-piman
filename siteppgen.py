@@ -9,6 +9,7 @@ site.pp generator
 import os
 import sys
 import json
+import inflect
 import argparse
 from configparser import SafeConfigParser
 
@@ -29,6 +30,7 @@ def print_resource(resource_name, resource_alias, strategy='deep'):
     print("$"+resource_alias+" = lookup("+resource_alias+", Hash, "+strategy+", {})", file=write_to)
     # create_resources(postgresql::schema, $postgresschemas)
     print("create_resources("+resource_name+", $"+resource_alias+")", file=write_to)
+
 
 def generatesitepp(config_file, write_sitepp_to=sys.stdout):
     global debug, write_to
@@ -72,6 +74,14 @@ def generatesitepp(config_file, write_sitepp_to=sys.stdout):
        while resource_name:
            resource_alias = resource_name.replace(':','').strip()+"s"
            print_resource(resource_name, resource_alias)
+
+           p = inflect.engine()
+           plural_resource_alias = p.plural(resource_name.replace(':','').strip())
+
+           if plural_resource_alias != resource_alias:
+               print_resource(resource_name, plural_resource_alias)
+
+
            resource_name = resource_file_handler.readline().rstrip(os.linesep).strip('"').strip("'").strip()
 
     for resource_alias in config.sections():

@@ -36,6 +36,8 @@ bash::alias
 bash::environment
 bash::prompt
 bash::umask
+chronyd::refclock
+chronyd::server
 couchbase::backupscript
 cron
 crond::grantuser
