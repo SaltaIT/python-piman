@@ -3,6 +3,7 @@ idna
 wrapt
 PyJWT
 certifi
+inflect
 chardet
 urllib3
 requests
