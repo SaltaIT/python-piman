@@ -465,5 +465,8 @@ if __name__ == '__main__':
 
             # commit helpers
             git_instance_repo.add('--all')
-            git_instance_repo.commit('-vam', 'piman helpers - '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
+            try:
+                git_instance_repo.commit('-vam', 'piman helpers - '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
+            except:
+                pass
             git_instance_repo.push('origin', 'master')
