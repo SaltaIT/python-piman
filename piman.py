@@ -354,119 +354,119 @@ if __name__ == '__main__':
                     print(instance+': INSTANCE repo push origin master')
 
 
-            #
-            # config repo
-            #
-            config_repo_path = base_dir+'/'+instance+'/.tmp_config_repo'
-            os.makedirs(name=config_repo_path, exist_ok=True)
-
-            if debug:
-                print("DEBUG: temporal config repo path: "+config_repo_path)
-
-            git_config_repo = sh.git.bake(_cwd=config_repo_path)
-
-            if os.path.isdir(config_repo_path+'/.git'):
-                # repo ja colonat
-                if debug:
-                    print(instance+': config repo ja clonat: '+config_repo_path)
-                git_config_repo.pull()
-
-            else:
-                if debug:
-                    print(instance+': inicialitzant config repo: '+config_repo_path)
-                sh.git.clone(instance_config_remote, config_repo_path)
-
-            # Puppetfile
-            if not os.path.isfile(config_repo_path+'/Puppetfile'):
-                if debug:
-                    print(instance+': generating '+config_repo_path+'/Puppetfile')
-                config_repo_puppetfile = open(config_repo_path+'/Puppetfile', "w+")
-                pfgen.generatePuppetfile(config_file=pfgen_config, write_puppetfile_to=config_repo_puppetfile)
-                config_repo_puppetfile.close()
-
-            # site.pp
-            if not os.path.isfile(config_repo_path+'/manifests/site.pp'):
-                if debug:
-                    print(instance+': generating '+config_repo_path+'/manifests/site.pp')
-                os.makedirs(name=config_repo_path+'/manifests', exist_ok=True)
-                config_repo_sitepp = open(config_repo_path+'/manifests/site.pp', "w+")
-                siteppgen.generatesitepp(config_file=sitepp_config, write_sitepp_to=config_repo_sitepp)
-                config_repo_sitepp.close()
-
-            # hiera.yaml
-            if not os.path.isfile(config_repo_path+'/hiera.yaml'):
-                if debug:
-                    print(instance+': generating '+config_repo_path+'/hiera.yaml')
-                config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
+                #
+                # config repo
+                #
+                config_repo_path = base_dir+'/'+instance+'/.tmp_config_repo'
+                os.makedirs(name=config_repo_path, exist_ok=True)
 
                 if debug:
-                    print("projectes: "+str(projects_authstrings))
+                    print("DEBUG: temporal config repo path: "+config_repo_path)
 
-                hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml, hieradata_base_dir=config_repo_path+'/hieradata', puppet_fqdn=puppet_fqdn, puppet_port=puppet_master_port, create_skel_auth_strings=projects_authstrings)
-                config_repo_hierayaml.close()
-            else:
-                hieragen.generatehieradataskel(config_file=hierayaml_config, hieradata_base_dir=config_repo_path+'/hieradata', create_skel_auth_strings=projects_authstrings)
+                git_config_repo = sh.git.bake(_cwd=config_repo_path)
 
-            git_config_repo.add('--all')
-            try:
-                git_config_repo.commit('-vam', 'piman '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
-            except:
-                pass
+                if os.path.isdir(config_repo_path+'/.git'):
+                    # repo ja colonat
+                    if debug:
+                        print(instance+': config repo ja clonat: '+config_repo_path)
+                    git_config_repo.pull()
 
-            try:
-                git_config_repo.branch('production')
-            except:
-                pass
+                else:
+                    if debug:
+                        print(instance+': inicialitzant config repo: '+config_repo_path)
+                    sh.git.clone(instance_config_remote, config_repo_path)
 
-            git_config_repo.checkout('production')
+                # Puppetfile
+                if not os.path.isfile(config_repo_path+'/Puppetfile'):
+                    if debug:
+                        print(instance+': generating '+config_repo_path+'/Puppetfile')
+                    config_repo_puppetfile = open(config_repo_path+'/Puppetfile', "w+")
+                    pfgen.generatePuppetfile(config_file=pfgen_config, write_puppetfile_to=config_repo_puppetfile)
+                    config_repo_puppetfile.close()
 
-            try:
-                git_config_repo.branch('-d', 'master')
-            except:
-                pass
+                # site.pp
+                if not os.path.isfile(config_repo_path+'/manifests/site.pp'):
+                    if debug:
+                        print(instance+': generating '+config_repo_path+'/manifests/site.pp')
+                    os.makedirs(name=config_repo_path+'/manifests', exist_ok=True)
+                    config_repo_sitepp = open(config_repo_path+'/manifests/site.pp', "w+")
+                    siteppgen.generatesitepp(config_file=sitepp_config, write_sitepp_to=config_repo_sitepp)
+                    config_repo_sitepp.close()
 
-            git_config_repo.push('-u', 'origin', 'production')
-            git_config_repo.pull('origin', 'production', '--allow-unrelated-histories', '--no-edit')
+                # hiera.yaml
+                if not os.path.isfile(config_repo_path+'/hiera.yaml'):
+                    if debug:
+                        print(instance+': generating '+config_repo_path+'/hiera.yaml')
+                    config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
 
-            if debug:
-                print(instance+': CONFIG repo push origin production')
+                    if debug:
+                        print("projectes: "+str(projects_authstrings))
 
-            # deploy instance helpers
+                    hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml, hieradata_base_dir=config_repo_path+'/hieradata', puppet_fqdn=puppet_fqdn, puppet_port=puppet_master_port, create_skel_auth_strings=projects_authstrings)
+                    config_repo_hierayaml.close()
+                else:
+                    hieragen.generatehieradataskel(config_file=hierayaml_config, hieradata_base_dir=config_repo_path+'/hieradata', create_skel_auth_strings=projects_authstrings)
 
-            instance_helpers_path = base_dir+'/'+instance
-            if not os.path.isfile(instance_repo_path+'/start.sh'):
+                git_config_repo.add('--all')
+                try:
+                    git_config_repo.commit('-vam', 'piman '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
+                except:
+                    pass
+
+                try:
+                    git_config_repo.branch('production')
+                except:
+                    pass
+
+                git_config_repo.checkout('production')
+
+                try:
+                    git_config_repo.branch('-d', 'master')
+                except:
+                    pass
+
+                git_config_repo.push('-u', 'origin', 'production')
+                git_config_repo.pull('origin', 'production', '--allow-unrelated-histories', '--no-edit')
+
                 if debug:
-                    print(instance+': generating start.sh')
+                    print(instance+': CONFIG repo push origin production')
 
-                start_sh_fh = open(instance_repo_path+'/start.sh', "w+")
-                print('#!/bin/bash', file=start_sh_fh)
-                print('cd '+instance_repo_path, file=start_sh_fh)
-                print('bash update.utils.sh', file=start_sh_fh)
-                print('docker-compose -p '+instance+' up -d', file=start_sh_fh)
-                print('cd $OLDPWD', file=start_sh_fh)
-            stat_startsh = os.stat(instance_repo_path+'/start.sh')
-            os.chmod(instance_repo_path+'/start.sh', stat_startsh.st_mode | stat.S_IEXEC)
-            if not os.path.isfile(instance_helpers_path+'/start.sh') and not os.path.islink(instance_helpers_path+'/start.sh'):
-                os.symlink(instance_repo_path+'/start.sh', instance_helpers_path+'/start.sh')
+                # deploy instance helpers
 
-            if not os.path.isfile(instance_repo_path+'/update.sh'):
-                if debug:
-                    print(instance+': generating update.sh')
+                instance_helpers_path = base_dir+'/'+instance
+                if not os.path.isfile(instance_repo_path+'/start.sh'):
+                    if debug:
+                        print(instance+': generating start.sh')
 
-                update_sh_fh = open(instance_repo_path+'/update.sh', "w+")
-                print('#!/bin/bash', file=update_sh_fh)
-                print('cd '+instance_repo_path, file=update_sh_fh)
-                print('docker-compose -p '+instance+' exec puppetmaster /usr/local/bin/updatepuppet.sh', file=update_sh_fh)
-                print('cd $OLDPWD', file=update_sh_fh)
-            stat_updatesh = os.stat(instance_repo_path+'/update.sh')
-            os.chmod(instance_repo_path+'/update.sh', stat_updatesh.st_mode | stat.S_IEXEC)
-            if not os.path.isfile(instance_helpers_path+'/update.sh') and not os.path.islink(instance_helpers_path+'/update.sh'):
-                os.symlink(instance_repo_path+'/update.sh', instance_helpers_path+'/update.sh')
+                    start_sh_fh = open(instance_repo_path+'/start.sh', "w+")
+                    print('#!/bin/bash', file=start_sh_fh)
+                    print('cd '+instance_repo_path, file=start_sh_fh)
+                    print('bash update.utils.sh', file=start_sh_fh)
+                    print('docker-compose -p '+instance+' up -d', file=start_sh_fh)
+                    print('cd $OLDPWD', file=start_sh_fh)
+                stat_startsh = os.stat(instance_repo_path+'/start.sh')
+                os.chmod(instance_repo_path+'/start.sh', stat_startsh.st_mode | stat.S_IEXEC)
+                if not os.path.isfile(instance_helpers_path+'/start.sh') and not os.path.islink(instance_helpers_path+'/start.sh'):
+                    os.symlink(instance_repo_path+'/start.sh', instance_helpers_path+'/start.sh')
 
-            # commit helpers
-            git_instance_repo.add('--all')
-            try:
-                git_instance_repo.commit('-vam', 'piman helpers - '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
-            except:
-                pass
-            git_instance_repo.push('origin', 'master')
+                if not os.path.isfile(instance_repo_path+'/update.sh'):
+                    if debug:
+                        print(instance+': generating update.sh')
+
+                    update_sh_fh = open(instance_repo_path+'/update.sh', "w+")
+                    print('#!/bin/bash', file=update_sh_fh)
+                    print('cd '+instance_repo_path, file=update_sh_fh)
+                    print('docker-compose -p '+instance+' exec puppetmaster /usr/local/bin/updatepuppet.sh', file=update_sh_fh)
+                    print('cd $OLDPWD', file=update_sh_fh)
+                stat_updatesh = os.stat(instance_repo_path+'/update.sh')
+                os.chmod(instance_repo_path+'/update.sh', stat_updatesh.st_mode | stat.S_IEXEC)
+                if not os.path.isfile(instance_helpers_path+'/update.sh') and not os.path.islink(instance_helpers_path+'/update.sh'):
+                    os.symlink(instance_repo_path+'/update.sh', instance_helpers_path+'/update.sh')
+
+                # commit helpers
+                git_instance_repo.add('--all')
+                try:
+                    git_instance_repo.commit('-vam', 'piman helpers - '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
+                except:
+                    pass
+                git_instance_repo.push('origin', 'master')
