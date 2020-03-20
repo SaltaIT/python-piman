@@ -369,13 +369,13 @@ if __name__ == '__main__':
             if os.path.isdir(config_repo_path+'/.git'):
                 # repo ja colonat
                 if debug:
-                    print(instance+': config repo ja clonat: '+config_repo_path)
-                git_config_repo.pull()
+                    print(instance+': config repo ja clonat, eliminant: '+config_repo_path)
+                sh.rm("-fr", config_repo_path)
+                os.makedirs(name=config_repo_path, exist_ok=True)
 
-            else:
-                if debug:
-                    print(instance+': inicialitzant config repo: '+config_repo_path)
-                sh.git.clone(instance_config_remote, config_repo_path)
+            if debug:
+                print(instance+': inicialitzant config repo: '+config_repo_path)
+            sh.git.clone(instance_config_remote, config_repo_path)
 
             # Puppetfile
             if not os.path.isfile(config_repo_path+'/Puppetfile'):
