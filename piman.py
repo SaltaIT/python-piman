@@ -267,6 +267,8 @@ if __name__ == '__main__':
                         project_auth_string = project+'_'+random_string_lowercase_digits()
                         projects_authstrings.append(project_auth_string)
 
+                save_puppet_details_to_file(puppet_fqdn, puppet_master_port, puppet_board_port, projects_authstrings, instance_repo_path+'/.piman.data')
+
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path)
