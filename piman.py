@@ -257,51 +257,6 @@ if __name__ == '__main__':
                 puppet_board_port = saved_config['puppetboard_port']
                 projects_authstrings = saved_config['projects_authstrings']
 
-                #
-                # config repo
-                #
-                config_repo_path = base_dir+'/'+instance+'/.tmp_config_repo'
-                os.makedirs(name=config_repo_path, exist_ok=True)
-
-                if debug:
-                    print("DEBUG: temporal config repo path: "+config_repo_path)
-
-                git_config_repo = sh.git.bake(_cwd=config_repo_path)
-
-                if os.path.isdir(config_repo_path+'/.git'):
-                    # repo ja colonat
-                    if debug:
-                        print(instance+': config repo ja clonat: '+config_repo_path)
-                    git_config_repo.pull()
-
-                else:
-                    if debug:
-                        print(instance+': inicialitzant config repo: '+config_repo_path)
-                    sh.git.clone(instance_config_remote, config_repo_path)
-
-                hieragen.generatehieradataskel(config_file=hierayaml_config, hieradata_base_dir=config_repo_path+'/hieradata', create_skel_auth_strings=projects_authstrings)
-
-                git_config_repo.add('--all')
-                try:
-                    git_config_repo.commit('-vam', 'piman '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
-                except:
-                    pass
-
-                try:
-                    git_config_repo.branch('production')
-                except:
-                    pass
-
-                git_config_repo.checkout('production')
-
-                try:
-                    git_config_repo.branch('-d', 'master')
-                except:
-                    pass
-
-                git_config_repo.push('-u', 'origin', 'production')
-                git_config_repo.pull('origin', 'production', '--allow-unrelated-histories', '--no-edit')
-
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path)
@@ -400,82 +355,82 @@ if __name__ == '__main__':
                     print(instance+': INSTANCE repo push origin master')
 
 
-                #
-                # config repo
-                #
-                config_repo_path = base_dir+'/'+instance+'/.tmp_config_repo'
-                os.makedirs(name=config_repo_path, exist_ok=True)
+            #
+            # config repo
+            #
+            config_repo_path = base_dir+'/'+instance+'/.tmp_config_repo'
+            os.makedirs(name=config_repo_path, exist_ok=True)
+
+            if debug:
+                print("DEBUG: temporal config repo path: "+config_repo_path)
+
+            git_config_repo = sh.git.bake(_cwd=config_repo_path)
+
+            if os.path.isdir(config_repo_path+'/.git'):
+                # repo ja colonat
+                if debug:
+                    print(instance+': config repo ja clonat: '+config_repo_path)
+                git_config_repo.pull()
+
+            else:
+                if debug:
+                    print(instance+': inicialitzant config repo: '+config_repo_path)
+                sh.git.clone(instance_config_remote, config_repo_path)
+
+            # Puppetfile
+            if not os.path.isfile(config_repo_path+'/Puppetfile'):
+                if debug:
+                    print(instance+': generating '+config_repo_path+'/Puppetfile')
+                config_repo_puppetfile = open(config_repo_path+'/Puppetfile', "w+")
+                pfgen.generatePuppetfile(config_file=pfgen_config, write_puppetfile_to=config_repo_puppetfile)
+                config_repo_puppetfile.close()
+
+            # site.pp
+            if not os.path.isfile(config_repo_path+'/manifests/site.pp'):
+                if debug:
+                    print(instance+': generating '+config_repo_path+'/manifests/site.pp')
+                os.makedirs(name=config_repo_path+'/manifests', exist_ok=True)
+                config_repo_sitepp = open(config_repo_path+'/manifests/site.pp', "w+")
+                siteppgen.generatesitepp(config_file=sitepp_config, write_sitepp_to=config_repo_sitepp)
+                config_repo_sitepp.close()
+
+            # hiera.yaml
+            if not os.path.isfile(config_repo_path+'/hiera.yaml'):
+                if debug:
+                    print(instance+': generating '+config_repo_path+'/hiera.yaml')
+                config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
 
                 if debug:
-                    print("DEBUG: temporal config repo path: "+config_repo_path)
+                    print("projectes: "+str(projects_authstrings))
 
-                git_config_repo = sh.git.bake(_cwd=config_repo_path)
+                hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml, hieradata_base_dir=config_repo_path+'/hieradata', puppet_fqdn=puppet_fqdn, puppet_port=puppet_master_port, create_skel_auth_strings=projects_authstrings)
+                config_repo_hierayaml.close()
+            else:
+                hieragen.generatehieradataskel(config_file=hierayaml_config, hieradata_base_dir=config_repo_path+'/hieradata', create_skel_auth_strings=projects_authstrings)
 
-                if os.path.isdir(config_repo_path+'/.git'):
-                    # repo ja colonat
-                    if debug:
-                        print(instance+': config repo ja clonat: '+config_repo_path)
-                    git_config_repo.pull()
+            git_config_repo.add('--all')
+            try:
+                git_config_repo.commit('-vam', 'piman '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
+            except:
+                pass
 
-                else:
-                    if debug:
-                        print(instance+': inicialitzant config repo: '+config_repo_path)
-                    sh.git.clone(instance_config_remote, config_repo_path)
+            try:
+                git_config_repo.branch('production')
+            except:
+                pass
 
-                # Puppetfile
-                if not os.path.isfile(config_repo_path+'/Puppetfile'):
-                    if debug:
-                        print(instance+': generating '+config_repo_path+'/Puppetfile')
-                    config_repo_puppetfile = open(config_repo_path+'/Puppetfile', "w+")
-                    pfgen.generatePuppetfile(config_file=pfgen_config, write_puppetfile_to=config_repo_puppetfile)
-                    config_repo_puppetfile.close()
+            git_config_repo.checkout('production')
 
-                # site.pp
-                if not os.path.isfile(config_repo_path+'/manifests/site.pp'):
-                    if debug:
-                        print(instance+': generating '+config_repo_path+'/manifests/site.pp')
-                    os.makedirs(name=config_repo_path+'/manifests', exist_ok=True)
-                    config_repo_sitepp = open(config_repo_path+'/manifests/site.pp', "w+")
-                    siteppgen.generatesitepp(config_file=sitepp_config, write_sitepp_to=config_repo_sitepp)
-                    config_repo_sitepp.close()
+            try:
+                git_config_repo.branch('-d', 'master')
+            except:
+                pass
 
-                # hiera.yaml
-                if not os.path.isfile(config_repo_path+'/hiera.yaml'):
-                    if debug:
-                        print(instance+': generating '+config_repo_path+'/hiera.yaml')
-                    config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
+            git_config_repo.push('-u', 'origin', 'production')
+            git_config_repo.pull('origin', 'production', '--allow-unrelated-histories', '--no-edit')
 
-                    if debug:
-                        print("projectes: "+str(projects_authstrings))
-
-                    hieragen.generatehierayaml(config_file=hierayaml_config, write_hierayaml_to=config_repo_hierayaml, hieradata_base_dir=config_repo_path+'/hieradata', puppet_fqdn=puppet_fqdn, puppet_port=puppet_master_port, create_skel_auth_strings=projects_authstrings)
-                    config_repo_hierayaml.close()
-                else:
-                    hieragen.generatehieradataskel(config_file=hierayaml_config, hieradata_base_dir=config_repo_path+'/hieradata', create_skel_auth_strings=projects_authstrings)
-
-                git_config_repo.add('--all')
-                try:
-                    git_config_repo.commit('-vam', 'piman '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
-                except:
-                    pass
-
-                try:
-                    git_config_repo.branch('production')
-                except:
-                    pass
-
-                git_config_repo.checkout('production')
-
-                try:
-                    git_config_repo.branch('-d', 'master')
-                except:
-                    pass
-
-                git_config_repo.push('-u', 'origin', 'production')
-                git_config_repo.pull('origin', 'production', '--allow-unrelated-histories', '--no-edit')
-
-                if debug:
-                    print(instance+': CONFIG repo push origin production')
+            if debug:
+                print(instance+': CONFIG repo push origin production')
 
                 # deploy instance helpers
 
