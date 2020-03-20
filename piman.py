@@ -257,6 +257,16 @@ if __name__ == '__main__':
                 puppet_board_port = saved_config['puppetboard_port']
                 projects_authstrings = saved_config['projects_authstrings']
 
+                for project in projects:
+                    found_project=False
+                    for project_authstring in projects_authstrings:
+                        if project_authstring.startswith(project):
+                            found_project=True
+                            break
+                    if not found_project:
+                        project_auth_string = project+'_'+random_string_lowercase_digits()
+                        projects_authstrings.append(project_auth_string)
+
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path)
