@@ -379,7 +379,7 @@ if __name__ == '__main__':
             if os.path.isdir(config_repo_path+'/.git'):
                 # repo ja colonat
                 if debug:
-                    print(instance+': config repo ja clonat, eliminant: '+config_repo_path)
+                    print(instance+': config repo ja clonat, refrescant: '+config_repo_path)
                 sh.rm("-fr", config_repo_path)
                 os.makedirs(name=config_repo_path, exist_ok=True)
 
