@@ -256,6 +256,52 @@ if __name__ == '__main__':
                 puppet_master_port = saved_config['puppetmaster_port']
                 puppet_board_port = saved_config['puppetboard_port']
                 projects_authstrings = saved_config['projects_authstrings']
+
+                #
+                # config repo
+                #
+                config_repo_path = base_dir+'/'+instance+'/.tmp_config_repo'
+                os.makedirs(name=config_repo_path, exist_ok=True)
+
+                if debug:
+                    print("DEBUG: temporal config repo path: "+config_repo_path)
+
+                git_config_repo = sh.git.bake(_cwd=config_repo_path)
+
+                if os.path.isdir(config_repo_path+'/.git'):
+                    # repo ja colonat
+                    if debug:
+                        print(instance+': config repo ja clonat: '+config_repo_path)
+                    git_config_repo.pull()
+
+                else:
+                    if debug:
+                        print(instance+': inicialitzant config repo: '+config_repo_path)
+                    sh.git.clone(instance_config_remote, config_repo_path)
+
+                hieragen.generatehieradataskel(config_file=hierayaml_config, hieradata_base_dir=config_repo_path+'/hieradata', create_skel_auth_strings=projects_authstrings)
+
+                git_config_repo.add('--all')
+                try:
+                    git_config_repo.commit('-vam', 'piman '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
+                except:
+                    pass
+
+                try:
+                    git_config_repo.branch('production')
+                except:
+                    pass
+
+                git_config_repo.checkout('production')
+
+                try:
+                    git_config_repo.branch('-d', 'master')
+                except:
+                    pass
+
+                git_config_repo.push('-u', 'origin', 'production')
+                git_config_repo.pull('origin', 'production', '--allow-unrelated-histories', '--no-edit')
+
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path)
