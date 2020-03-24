@@ -73,7 +73,11 @@ then
   yum install python3 python3-pip -y
 fi
 
-pip3 install -r requirements.txt
+if [ ! -f /opt/python-piman/requirements.txt ];
+then
+  echo ">> ERROR: PIM requirements file NOT FOUND"
+fi
+pip3 install -r /opt/python-piman/requirements.txt
 
 if [ ! -f /usr/local/bin/piman ];
 then
