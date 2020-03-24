@@ -2,8 +2,7 @@
 
 if [ ! -d /opt/python-piman/.git ];
 then
-  echo ">> ERROR: /opt/python-piman is not a repository"
-  echo "please clone piman respistory to /opt/python-piman"
+  echo ">> ERROR: /opt/python-piman is not a repository; please clone piman respistory to /opt/python-piman"
   exit 1
 fi
 
