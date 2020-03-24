@@ -257,6 +257,18 @@ if __name__ == '__main__':
                 puppet_board_port = saved_config['puppetboard_port']
                 projects_authstrings = saved_config['projects_authstrings']
 
+                for project in projects:
+                    found_project=False
+                    for project_authstring in projects_authstrings:
+                        if project_authstring.startswith(project):
+                            found_project=True
+                            break
+                    if not found_project:
+                        project_auth_string = project+'_'+random_string_lowercase_digits()
+                        projects_authstrings.append(project_auth_string)
+
+                save_puppet_details_to_file(puppet_fqdn, puppet_master_port, puppet_board_port, projects_authstrings, instance_repo_path+'/.piman.data')
+
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path)
@@ -369,13 +381,13 @@ if __name__ == '__main__':
             if os.path.isdir(config_repo_path+'/.git'):
                 # repo ja colonat
                 if debug:
-                    print(instance+': config repo ja clonat: '+config_repo_path)
-                git_config_repo.pull()
+                    print(instance+': config repo ja clonat, refrescant: '+config_repo_path)
+                sh.rm("-fr", config_repo_path)
+                os.makedirs(name=config_repo_path, exist_ok=True)
 
-            else:
-                if debug:
-                    print(instance+': inicialitzant config repo: '+config_repo_path)
-                sh.git.clone(instance_config_remote, config_repo_path)
+            if debug:
+                print(instance+': inicialitzant config repo: '+config_repo_path)
+            sh.git.clone(instance_config_remote, config_repo_path)
 
             # Puppetfile
             if not os.path.isfile(config_repo_path+'/Puppetfile'):
