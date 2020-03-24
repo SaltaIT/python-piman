@@ -1,5 +1,15 @@
 #!/bin/bash
 
+if [ ! -d /opt/python-piman/.git ];
+then
+  echo ">> ERROR: /opt/python-piman is not a repository"
+  echo "please clone piman respistory to /opt/python-piman"
+  exit 1
+fi
+
+cd /opt/python-piman
+git pull origin master
+
 yum install -y yum-utils \
   device-mapper-persistent-data \
   lvm2	\
