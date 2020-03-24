@@ -256,6 +256,7 @@ if __name__ == '__main__':
                 puppet_master_port = saved_config['puppetmaster_port']
                 puppet_board_port = saved_config['puppetboard_port']
                 projects_authstrings = saved_config['projects_authstrings']
+
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path)
@@ -431,39 +432,42 @@ if __name__ == '__main__':
             if debug:
                 print(instance+': CONFIG repo push origin production')
 
-            # deploy instance helpers
+                # deploy instance helpers
 
-            instance_helpers_path = base_dir+'/'+instance
-            if not os.path.isfile(instance_repo_path+'/start.sh'):
-                if debug:
-                    print(instance+': generating start.sh')
+                instance_helpers_path = base_dir+'/'+instance
+                if not os.path.isfile(instance_repo_path+'/start.sh'):
+                    if debug:
+                        print(instance+': generating start.sh')
 
-                start_sh_fh = open(instance_repo_path+'/start.sh', "w+")
-                print('#!/bin/bash', file=start_sh_fh)
-                print('cd '+instance_repo_path, file=start_sh_fh)
-                print('bash update.utils.sh', file=start_sh_fh)
-                print('docker-compose -p '+instance+' up -d', file=start_sh_fh)
-                print('cd $OLDPWD', file=start_sh_fh)
-            stat_startsh = os.stat(instance_repo_path+'/start.sh')
-            os.chmod(instance_repo_path+'/start.sh', stat_startsh.st_mode | stat.S_IEXEC)
-            if not os.path.isfile(instance_helpers_path+'/start.sh') and not os.path.islink(instance_helpers_path+'/start.sh'):
-                os.symlink(instance_repo_path+'/start.sh', instance_helpers_path+'/start.sh')
+                    start_sh_fh = open(instance_repo_path+'/start.sh', "w+")
+                    print('#!/bin/bash', file=start_sh_fh)
+                    print('cd '+instance_repo_path, file=start_sh_fh)
+                    print('bash update.utils.sh', file=start_sh_fh)
+                    print('docker-compose -p '+instance+' up -d', file=start_sh_fh)
+                    print('cd $OLDPWD', file=start_sh_fh)
+                stat_startsh = os.stat(instance_repo_path+'/start.sh')
+                os.chmod(instance_repo_path+'/start.sh', stat_startsh.st_mode | stat.S_IEXEC)
+                if not os.path.isfile(instance_helpers_path+'/start.sh') and not os.path.islink(instance_helpers_path+'/start.sh'):
+                    os.symlink(instance_repo_path+'/start.sh', instance_helpers_path+'/start.sh')
 
-            if not os.path.isfile(instance_repo_path+'/update.sh'):
-                if debug:
-                    print(instance+': generating update.sh')
+                if not os.path.isfile(instance_repo_path+'/update.sh'):
+                    if debug:
+                        print(instance+': generating update.sh')
 
-                update_sh_fh = open(instance_repo_path+'/update.sh', "w+")
-                print('#!/bin/bash', file=update_sh_fh)
-                print('cd '+instance_repo_path, file=update_sh_fh)
-                print('docker-compose -p '+instance+' exec puppetmaster /usr/local/bin/updatepuppet.sh', file=update_sh_fh)
-                print('cd $OLDPWD', file=update_sh_fh)
-            stat_updatesh = os.stat(instance_repo_path+'/update.sh')
-            os.chmod(instance_repo_path+'/update.sh', stat_updatesh.st_mode | stat.S_IEXEC)
-            if not os.path.isfile(instance_helpers_path+'/update.sh') and not os.path.islink(instance_helpers_path+'/update.sh'):
-                os.symlink(instance_repo_path+'/update.sh', instance_helpers_path+'/update.sh')
+                    update_sh_fh = open(instance_repo_path+'/update.sh', "w+")
+                    print('#!/bin/bash', file=update_sh_fh)
+                    print('cd '+instance_repo_path, file=update_sh_fh)
+                    print('docker-compose -p '+instance+' exec puppetmaster /usr/local/bin/updatepuppet.sh', file=update_sh_fh)
+                    print('cd $OLDPWD', file=update_sh_fh)
+                stat_updatesh = os.stat(instance_repo_path+'/update.sh')
+                os.chmod(instance_repo_path+'/update.sh', stat_updatesh.st_mode | stat.S_IEXEC)
+                if not os.path.isfile(instance_helpers_path+'/update.sh') and not os.path.islink(instance_helpers_path+'/update.sh'):
+                    os.symlink(instance_repo_path+'/update.sh', instance_helpers_path+'/update.sh')
 
-            # commit helpers
-            git_instance_repo.add('--all')
-            git_instance_repo.commit('-vam', 'piman helpers - '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
-            git_instance_repo.push('origin', 'master')
+                # commit helpers
+                git_instance_repo.add('--all')
+                try:
+                    git_instance_repo.commit('-vam', 'piman helpers - '+datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'))
+                except:
+                    pass
+                git_instance_repo.push('origin', 'master')
