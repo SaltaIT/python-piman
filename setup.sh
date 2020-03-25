@@ -104,9 +104,9 @@ then
   mkdir -p /etc/piman
   ln -s /opt/python-piman/siteppgen /etc/piman/siteppgen
 
-  cp /opt/python-piman/piman.config-template /etc/piman/hieragen.config
+  cp /opt/python-piman/piman.config-template /etc/piman/piman.config
 
-  cp /opt/python-piman/pfgen.config-template /etc/piman/hieragen.config
+  cp /opt/python-piman/pfgen.config-template /etc/piman/pfgen.config
 
   cp /opt/python-piman/hieragen.config-template /etc/piman/hieragen.config
 
