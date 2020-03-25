@@ -98,3 +98,13 @@ if [ "$?" -ne 0 ];
 then
   echo "== WARNING: git version is not 2 (current version: $(git --version | awk '{ print $3 }'))"
 fi
+
+if [ ! -d /etc/piman ];
+then
+  mkdir -p /etc/piman
+  ln -s /opt/python-piman/siteppgen /etc/piman/siteppgen
+
+  cp /opt/python-piman/hieragen.config-template /etc/piman/hieragen.config
+
+  cp /opt/python-piman/siteppgen.config-template /etc/piman/siteppgen.config
+fi

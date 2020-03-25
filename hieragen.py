@@ -25,6 +25,14 @@ def mkdir_gitkeep(dirname):
     gitkeep = open(dirname+"/.gitkeep","w+")
     gitkeep.close()
 
+# TODO:
+def print_hierarchy_item(hierarchy_item, auth_string, write_to=sys.stdout):
+    print('  - name: "node fqdn"', file=write_to)
+    print('    globs:', file=write_to)
+    print('      - "' + auth_string + 'node/%{::fqdn}/*.yaml"', file=write_to)
+    print('      - "' + auth_string + 'node/%{::fqdn}.yaml"', file=write_to)
+    print('', file=write_to)
+
 def generatehieradataskel(config_file, hieradata_base_dir='', create_skel_auth_strings=[]):
     global debug
 
