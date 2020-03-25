@@ -10,7 +10,7 @@ import os
 import sys
 import json
 import argparse
-from configparser import SafeConfigParser
+from configparser import RawConfigParser
 
 debug = False
 write_to = sys.stdout
@@ -26,17 +26,18 @@ def mkdir_gitkeep(dirname):
     gitkeep.close()
 
 # TODO:
-def print_hierarchy_item(hierarchy_item, auth_string, write_to=sys.stdout):
-    print('  - name: "node fqdn"', file=write_to)
+def print_hierarchy_item(item_name, globs, auth_string, write_to=sys.stdout):
+    print('  - name: "'+item_name+'"', file=write_to)
     print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'node/%{::fqdn}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'node/%{::fqdn}.yaml"', file=write_to)
+    for glob in globs:
+        print('      - "' + auth_string + glob+'/*.yaml"', file=write_to)
+        print('      - "' + auth_string + glob+'.yaml"', file=write_to)
     print('', file=write_to)
 
 def generatehieradataskel(config_file, hieradata_base_dir='', create_skel_auth_strings=[]):
     global debug
 
-    config = SafeConfigParser()
+    config = RawConfigParser()
     config.read(config_file)
 
     try:
@@ -63,7 +64,7 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
 
     write_to=write_hierayaml_to
 
-    config = SafeConfigParser()
+    config = RawConfigParser()
     config.read(config_file)
 
     try:
@@ -125,63 +126,14 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
         print('      - "override/*.yaml"', file=write_to)
         print('      - "override.yaml"', file=write_to)
         print('', file=write_to)
-    print('  - name: "node fqdn"', file=write_to)
-    print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'node/%{::fqdn}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'node/%{::fqdn}.yaml"', file=write_to)
-    print('', file=write_to)
-    print('  - name: "node hostname"', file=write_to)
-    print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'node/%{::hostname}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'node/%{::hostname}.yaml"', file=write_to)
-    print('', file=write_to)
-    print('  - name: "env/type/servergroup combined"', file=write_to)
-    print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'hierarchy/%{::eypconf_env}/%{::eypconf_type}/%{::eypconf_servergroup}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'hierarchy/%{::eypconf_env}/%{::eypconf_type}/%{::eypconf_servergroup}.yaml"', file=write_to)
-    print('', file=write_to)
-    print('  - name: "sg"', file=write_to)
-    print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'sg/%{::eypconf_sg}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'sg/%{::eypconf_sg}.yaml"', file=write_to)
-    print('', file=write_to)
-    print('  - name: "servergroup"', file=write_to)
-    print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'servergroup/%{::eypconf_servergroup}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'servergroup/%{::eypconf_servergroup}.yaml"', file=write_to)
-    print('', file=write_to)
-    print('  - name: "env/type combined"', file=write_to)
-    print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'hierarchy/%{::eypconf_env}/%{::eypconf_type}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'hierarchy/%{::eypconf_env}/%{::eypconf_type}.yaml"', file=write_to)
-    print('', file=write_to)
-    print('  - name: "type"', file=write_to)
-    print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'type/%{::eypconf_type}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'type/%{::eypconf_type}.yaml"', file=write_to)
-    print('', file=write_to)
-    print('  - name: "env"', file=write_to)
-    print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'hierarchy/%{::eypconf_env}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'hierarchy/%{::eypconf_env}.yaml"', file=write_to)
-    print('      - "' + auth_string + 'env/%{::eypconf_env}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'env/%{::eypconf_env}.yaml"', file=write_to)
-    print('', file=write_to)
-    print('  - name: "project\'s common os release"', file=write_to)
-    print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'common-%{::osfamily}-%{::operatingsystemmajrelease}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'common-%{::osfamily}-%{::operatingsystemmajrelease}.yaml"', file=write_to)
-    print('', file=write_to)
-    print('  - name: "project\'s common os family"', file=write_to)
-    print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'common-%{::osfamily}/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'common-%{::osfamily}.yaml"', file=write_to)
-    print('', file=write_to)
-    print('  - name: "project\'s common"', file=write_to)
-    print('    globs:', file=write_to)
-    print('      - "' + auth_string + 'common/*.yaml"', file=write_to)
-    print('      - "' + auth_string + 'common.yaml"', file=write_to)
-    print('', file=write_to)
+
+    for instance in config.sections():
+        if instance!='hieragen':
+            globs = []
+            for (item, value) in config.items(instance):
+                globs.append(value)
+            print_hierarchy_item(instance, globs, auth_string, write_to)  
+
     if unauth_common_area:
         print('  - name: "common os release"', file=write_to)
         print('    globs:', file=write_to)
