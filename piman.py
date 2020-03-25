@@ -271,7 +271,7 @@ if __name__ == '__main__':
 
             else:
                 #clonar repo, importar desde template
-                sh.git.clone(instance_instance_remote, instance_repo_path)
+                sh.git.clone(instance_instance_remote, instance_repo_path, _env={"GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
 
                 # TODO: check si el repo remot ja conté dades
 
@@ -387,7 +387,7 @@ if __name__ == '__main__':
 
             if debug:
                 print(instance+': inicialitzant config repo: '+config_repo_path)
-            sh.git.clone(instance_config_remote, config_repo_path)
+            sh.git.clone(instance_config_remote, config_repo_path, _env={"GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
 
             # Puppetfile
             if not os.path.isfile(config_repo_path+'/Puppetfile'):
