@@ -5,3 +5,4 @@ venv
 *.config
 __pycache__/*
 demos/*
+.vscode
