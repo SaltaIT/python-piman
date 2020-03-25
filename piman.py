@@ -249,7 +249,7 @@ if __name__ == '__main__':
                     print(instance+': instance repo ja clonat: '+instance_repo_path)
 
                 # update repo desde remote
-                git_instance_repo = sh.git.bake(_cwd=instance_repo_path)
+                git_instance_repo = sh.git.bake(_cwd=instance_repo_path, _env={"GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
                 git_instance_repo.pull('origin', 'master')
 
                 saved_config = load_puppet_details_to_file(instance_repo_path+'/.piman.data')
@@ -275,7 +275,7 @@ if __name__ == '__main__':
 
                 # TODO: check si el repo remot ja conté dades
 
-                git_instance_repo = sh.git.bake(_cwd=instance_repo_path)
+                git_instance_repo = sh.git.bake(_cwd=instance_repo_path, _env={"GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
                 git_instance_repo.remote.add('template', instance_template)
                 git_instance_repo.pull('template', 'master')
 
@@ -376,7 +376,7 @@ if __name__ == '__main__':
             if debug:
                 print("DEBUG: temporal config repo path: "+config_repo_path)
 
-            git_config_repo = sh.git.bake(_cwd=config_repo_path)
+            git_config_repo = sh.git.bake(_cwd=config_repo_path, _env={"GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
 
             if os.path.isdir(config_repo_path+'/.git'):
                 # repo ja colonat
