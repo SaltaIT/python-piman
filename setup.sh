@@ -44,6 +44,7 @@ fi
 systemctl status docker > /dev/null 2>&1
 if [ "$?" -ne 0 ];
 then
+  systemctl enable docker
   systemctl start docker
 fi
 
