@@ -259,7 +259,7 @@ if __name__ == '__main__':
                     print(instance+': instance repo ja clonat: '+instance_repo_path)
 
                 # update repo desde remote
-                git_instance_repo = sh.git.bake(_cwd=instance_repo_path, _env={"GIT_AUTHOR_NAME": author_name, "GIT_AUTHOR_EMAIL": author_email, "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
+                git_instance_repo = sh.git.bake(_cwd=instance_repo_path, _env={"EMAIL": author_email,"GIT_AUTHOR_NAME": author_name, "GIT_AUTHOR_EMAIL": author_email, "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
                 git_instance_repo.pull('origin', 'master')
 
                 saved_config = load_puppet_details_to_file(instance_repo_path+'/.piman.data')
@@ -281,11 +281,11 @@ if __name__ == '__main__':
 
             else:
                 #clonar repo, importar desde template
-                sh.git.clone(instance_instance_remote, instance_repo_path, _env={"GIT_AUTHOR_NAME": author_name, "GIT_AUTHOR_EMAIL": author_email, "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
+                sh.git.clone(instance_instance_remote, instance_repo_path, _env={"EMAIL": author_email, "GIT_AUTHOR_NAME": author_name, "GIT_AUTHOR_EMAIL": author_email, "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
 
                 # TODO: check si el repo remot ja conté dades
 
-                git_instance_repo = sh.git.bake(_cwd=instance_repo_path, _env={"GIT_AUTHOR_NAME": author_name, "GIT_AUTHOR_EMAIL": author_email, "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
+                git_instance_repo = sh.git.bake(_cwd=instance_repo_path, _env={"EMAIL": author_email, "GIT_AUTHOR_NAME": author_name, "GIT_AUTHOR_EMAIL": author_email, "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
                 git_instance_repo.remote.add('template', instance_template)
                 git_instance_repo.pull('template', 'master')
 
@@ -386,7 +386,7 @@ if __name__ == '__main__':
             if debug:
                 print("DEBUG: temporal config repo path: "+config_repo_path)
 
-            git_config_repo = sh.git.bake(_cwd=config_repo_path, _env={"GIT_AUTHOR_NAME": author_name, "GIT_AUTHOR_EMAIL": author_email, "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
+            git_config_repo = sh.git.bake(_cwd=config_repo_path, _env={"EMAIL": author_email, "GIT_AUTHOR_NAME": author_name, "GIT_AUTHOR_EMAIL": author_email, "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
 
             if os.path.isdir(config_repo_path+'/.git'):
                 # repo ja colonat
@@ -397,7 +397,7 @@ if __name__ == '__main__':
 
             if debug:
                 print(instance+': inicialitzant config repo: '+config_repo_path)
-            sh.git.clone(instance_config_remote, config_repo_path, _env={"GIT_AUTHOR_NAME": author_name, "GIT_AUTHOR_EMAIL": author_email, "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
+            sh.git.clone(instance_config_remote, config_repo_path, _env={"EMAIL": author_email, "GIT_AUTHOR_NAME": author_name, "GIT_AUTHOR_EMAIL": author_email, "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
 
             # Puppetfile
             if not os.path.isfile(config_repo_path+'/Puppetfile'):
