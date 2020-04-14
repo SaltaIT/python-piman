@@ -279,7 +279,7 @@ if __name__ == '__main__':
 
                 save_puppet_details_to_file(puppet_fqdn, puppet_master_port, puppet_board_port, projects_authstrings, instance_repo_path+'/.piman.data')
 
-                sh.sed('s/^# docker-puppet5/# '+instance+'/','-i', instance_repo_path+'/README.md')
+                sh.sed('s/^# docker-puppetmaster5/# '+instance+'/','-i', instance_repo_path+'/README.md')
             else:
                 #clonar repo, importar desde template
                 sh.git.clone(instance_instance_remote, instance_repo_path, _env={"EMAIL": author_email, "GIT_AUTHOR_NAME": author_name, "GIT_AUTHOR_EMAIL": author_email, "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"})
@@ -294,7 +294,7 @@ if __name__ == '__main__':
 
                 sh.cp(glob.glob(str(Path.home())+'/.ssh/id*a'), instance_repo_path+'/ssh')
 
-                sh.sed('s/^# docker-puppet5/# '+instance+'/','-i', instance_repo_path+'/README.md')
+                sh.sed('s/^# docker-puppetmaster5/# '+instance+'/','-i', instance_repo_path+'/README.md')
 
                 gitignore = open(instance_repo_path+"/.gitignore","w+")
                 gitignore.write("*~\n")
