@@ -293,6 +293,8 @@ if __name__ == '__main__':
 
                 sh.cp(glob.glob(str(Path.home())+'/.ssh/id*a'), instance_repo_path+'/ssh')
 
+                sh.sed('s/^# docker-puppet5/# '+instance+'/','-i', instance_repo_path+'/README.md')
+
                 gitignore = open(instance_repo_path+"/.gitignore","w+")
                 gitignore.write("*~\n")
                 gitignore.write("*swp\n")
