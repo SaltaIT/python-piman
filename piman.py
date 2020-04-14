@@ -278,6 +278,8 @@ if __name__ == '__main__':
                         projects_authstrings.append(project_auth_string)
 
                 save_puppet_details_to_file(puppet_fqdn, puppet_master_port, puppet_board_port, projects_authstrings, instance_repo_path+'/.piman.data')
+                
+		sh.sed('s/^# docker-puppet5/# '+instance+'/','-i', instance_repo_path+'/README.md')
 
             else:
                 #clonar repo, importar desde template
