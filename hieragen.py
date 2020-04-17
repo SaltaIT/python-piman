@@ -136,8 +136,12 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
         if instance!='hieragen':
             globs = []
             for (item, value) in config.items(instance):
-                globs.append(value)
-            print_hierarchy_item(instance, globs, auth_string, write_to)  
+                if value!='0':
+                    glob=item+':'+value
+                else:
+                    glob=item
+                globs.append(glob)
+            print_hierarchy_item(instance, globs, auth_string, write_to)
 
     if unauth_common_area:
         print('  - name: "common os release"', file=write_to)

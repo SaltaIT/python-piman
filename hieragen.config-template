@@ -46,4 +46,4 @@ common-%{::osfamily}
 
 [project's common area]
 
-common = 1
+common = 0
