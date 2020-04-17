@@ -59,6 +59,9 @@ def generatehieradataskel(config_file, hieradata_base_dir='', create_skel_auth_s
         for dir_name in [ '/env', '/hierarchy', '/type', '/servergroup', '/node', '/config-catalog' ]:
             mkdir_gitkeep(hieradata_base_dir+'/'+project_id+'/'+dir_name)
 
+def writehierayaml(write_to=sys.stdout, auth_string, globs, include_override=True, unauth_common_area=True, puppet_agent_common_area=True):
+    pass
+
 def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base_dir='', puppet_fqdn='', puppet_port=None, create_skel_auth_strings=[]):
     global debug, write_to
 
@@ -111,6 +114,8 @@ def generatehierayaml(config_file, write_hierayaml_to=sys.stdout, hieradata_base
 
     if debug and hieradata_base_dir:
         eprint('hieradata_base_dir: '+str(hieradata_base_dir))
+
+    #writehierayaml(write_to, )
 
     print('---', file=write_to)
     print('version: 5', file=write_to)
