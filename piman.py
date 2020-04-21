@@ -136,7 +136,10 @@ if __name__ == '__main__':
     try:
         base_dir = config.get('piman', 'base-dir').strip('"').strip("'").strip()
     except:
-        sys.exit("ERROR: base-dir is mandatory")
+        try:
+            base_dir = config.get('piman', 'instance-dir').strip('"').strip("'").strip()
+        except:
+            sys.exit("ERROR: base-dir is mandatory")
 
     try:
         instance_template = config.get('piman', 'instance-template').strip('"').strip("'").strip()

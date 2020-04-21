@@ -1,5 +1,5 @@
 [piman]
-base-dir = /opt/puppet-instances
+instance-dir = /opt/puppet-instances
 config-dir = /etc/piman
 instance-template = https://github.com/jordiprats/docker-puppetmaster5
 puppet-fqdn = puppet.systemadmin.es
