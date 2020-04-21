@@ -183,6 +183,11 @@ if __name__ == '__main__':
     except:
         enable_puppetboard = True
 
+    try:
+        bind_ip = config.get('piman','bind-ip').strip('"').strip("'").strip()+':'
+    except:
+        bind_ip = ''
+
     #
     # instances puppet
     #
@@ -226,7 +231,10 @@ if __name__ == '__main__':
             try:
                 bind_ip = config.get(instance,'bind-ip').strip('"').strip("'").strip()+':'
             except:
-                bind_ip = ''
+                try:
+                    bind_ip = config.get('piman','bind-ip').strip('"').strip("'").strip()+':'
+                except:
+                    bind_ip = ''
 
             try:
                 add_default_network = config.getboolean(instance, 'add-default-network')
@@ -242,6 +250,19 @@ if __name__ == '__main__':
                 author_name = config.get(instance, 'author-name').strip('"').strip("'").strip()
             except:
                 author_name="Dr. Auto Commit"
+
+            try:
+                puppet_fqdn = config.get(instance, 'puppet-fqdn').strip('"').strip("'").strip()
+            except:
+                puppet_fqdn = config.get('piman', 'puppet-fqdn').strip('"').strip("'").strip()
+
+            try:
+                enable_puppetboard = config.getboolean(instance, 'enable-puppetboard')
+            except:
+                try:
+                    enable_puppetboard = config.getboolean('piman', 'enable-puppetboard')
+                except:
+                    enable_puppetboard = True
 
             #
             # instance repo
