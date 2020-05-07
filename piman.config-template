@@ -26,3 +26,7 @@ instance = git@gitlab.com:demoproject/demo-instance.git
 # puppet-fqdn = puppet.systemadmin.es
 # bind-ip = 0.0.0.0
 # enable-puppetboard = true
+
+# pfgen-config = /etc/piman/pfgen-demo.config
+# sitepp-config = /etc/piman/siteppgen-demo.config
+# hierayaml-config = /etc/piman/hieragen-demo.config
