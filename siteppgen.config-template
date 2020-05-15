@@ -56,6 +56,14 @@ merge-strategy = deep
 resource-name = sudoers::sudo
 merge-strategy = deep
 
+[tomcatusers]
+resource-name = tomcat::tomcatuser
+merge-strategy = deep
+
+[apacheserverstatus]
+resource-name = apache::serverstatus
+merge-strategy = deep
+
 [haproxystats]
 resource-name = haproxy::stats
 
