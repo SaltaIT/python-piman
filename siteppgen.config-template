@@ -60,6 +60,10 @@ merge-strategy = deep
 resource-name = tomcat::tomcatuser
 merge-strategy = deep
 
+[apachecustomconfs]
+resource-name = apache::custom_conf
+merge-strategy = deep
+
 [apacheserverstatus]
 resource-name = apache::serverstatus
 merge-strategy = deep
