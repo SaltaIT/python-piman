@@ -12,6 +12,7 @@ debug = true
 # sitepp-config = /etc/piman/siteppgen.config
 # hierayaml-config = /etc/piman/hieragen.config
 
+# skip-pfgen = false
 
 [demo]
 
@@ -30,3 +31,4 @@ instance = git@gitlab.com:demoproject/demo-instance.git
 # pfgen-config = /etc/piman/pfgen-demo.config
 # sitepp-config = /etc/piman/siteppgen-demo.config
 # hierayaml-config = /etc/piman/hieragen-demo.config
+# skip-pfgen = false
