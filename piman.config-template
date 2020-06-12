@@ -32,3 +32,4 @@ instance = git@gitlab.com:demoproject/demo-instance.git
 # sitepp-config = /etc/piman/siteppgen-demo.config
 # hierayaml-config = /etc/piman/hieragen-demo.config
 # skip-pfgen = false
+# refresh-hierayaml = false

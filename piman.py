@@ -177,6 +177,11 @@ if __name__ == '__main__':
         skip_pfgen = False
 
     try:
+        refresh_hierayaml = config.getboolean('piman', 'refresh-hierayaml')
+    except:
+        refresh_hierayaml = False
+
+    try:
         hierayaml_config = config.get('piman', 'hierayaml-config')
     except:
         hierayaml_config = config_dir+'/hieragen.config'
@@ -273,12 +278,20 @@ if __name__ == '__main__':
                     enable_puppetboard = True
 
             try:
-                skip_pfgen = config.getboolean(instance, 'skip_pfgen')
+                skip_pfgen = config.getboolean(instance, 'skip-pfgen')
             except:
                 try:
-                    skip_pfgen = config.getboolean('piman', 'skip_pfgen')
+                    skip_pfgen = config.getboolean('piman', 'skip-pfgen')
                 except:
                     skip_pfgen = False
+
+            try:
+                refresh_hierayaml = config.getboolean(instance, 'refresh-hierayaml')
+            except:
+                try:
+                    refresh_hierayaml = config.getboolean('piman', 'refresh-hierayaml')
+                except:
+                    refresh_hierayaml = False
 
             #
             # instance repo
@@ -458,7 +471,7 @@ if __name__ == '__main__':
                 config_repo_sitepp.close()
 
             # hiera.yaml
-            if not os.path.isfile(config_repo_path+'/hiera.yaml'):
+            if not os.path.isfile(config_repo_path+'/hiera.yaml') or refresh_hierayaml:
                 if debug:
                     print(instance+': generating '+config_repo_path+'/hiera.yaml')
                 config_repo_hierayaml = open(config_repo_path+'/hiera.yaml', "w+")
