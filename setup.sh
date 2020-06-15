@@ -11,8 +11,7 @@ git pull origin master
 
 yum install -y yum-utils \
   device-mapper-persistent-data \
-  lvm2	\
-  cowsay
+  lvm2
 
 rpm -qa | grep docker-ce > /dev/null 2>&1
 if [ "$?" -ne 0 ];
